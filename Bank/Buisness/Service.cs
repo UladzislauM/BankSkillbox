@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using NLog.Targets;
+﻿using NLog;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -14,7 +13,7 @@ namespace Bank.Buisness
     /// </summary>
     public class Service : MyNotification
     {
-        private readonly ILogger<Service> _logger;
+        private readonly NLog.Logger _logger;
         private readonly Repository _repository;
 
         public event Action<object> SavedJsonObject;
@@ -38,9 +37,9 @@ namespace Bank.Buisness
         public ObservableCollection<Score> Scores;
         public ObservableCollection<Client> Clients;
 
-        public Service(ILogger<Service> logger, Repository repository)
+        public Service(Repository repository)
         {
-            _logger = logger;
+            _logger = LogManager.GetCurrentClassLogger();
             _repository = repository;
 
             ClientId = 0;
@@ -81,7 +80,7 @@ namespace Bank.Buisness
                 score.IsMoney = true;
             }
 
-            _logger.LogInformation($"A {score.ScoreType} account has been created for the user {score.Client.FirstName} {score.Client.LastName}");
+            _logger.Info($"A {score.ScoreType} account has been created for the user {score.Client.FirstName} {score.Client.LastName}");
 
             Scores.Add(score);
         }
@@ -97,7 +96,7 @@ namespace Bank.Buisness
             client.Id = ClientId;
             ClientId++;
 
-            _logger.LogInformation($"Client {client.FirstName} {client.LastName} has been created.");
+            _logger.Info($"Client {client.FirstName} {client.LastName} has been created.");
 
             Clients.Add(client);
         }
@@ -114,13 +113,13 @@ namespace Bank.Buisness
                 data.Clients = Clients;
                 data.Scores = Scores;
 
-                _logger.LogInformation($"General Json saved");
+                _logger.Info($"General Json saved");
 
                 SaveJsonData<UnionData>(data);
             }
             catch
             {
-                _logger.LogError("General Json don't save");
+                _logger.Error("General Json don't save");
                 throw new Exception("General Json don't save");
             }
         }
@@ -148,13 +147,13 @@ namespace Bank.Buisness
                     SavedJsonObject.Invoke(objectForSaveJson);
                 }
 
-                _logger.LogInformation($"Json data saved.");
+                _logger.Info($"Json data saved.");
 
                 return stateOfSave;
             }
             catch
             {
-                _logger.LogError($"Json data saved.");
+                _logger.Error($"Json data saved.");
                 throw new Exception("Save json data failed");
             }
         }
@@ -180,11 +179,11 @@ namespace Bank.Buisness
                     ScoreId = Scores[Scores.Count - 1].Id + 1;
                 }
 
-                _logger.LogInformation($"Json opened.");
+                _logger.Info($"Json opened.");
             }
             catch
             {
-                _logger.LogError($"Open Json failed.");
+                _logger.Error($"Open Json failed.");
                 throw new Exception("Open Json failed");
             }
         }
@@ -207,12 +206,12 @@ namespace Bank.Buisness
 
                     if (currentScore.ScoreType == Score.ScoreTypes.Deposit)
                     {
-                        _logger.LogInformation($"Deposit with id = {currentScore.Id} ended.");
+                        _logger.Info($"Deposit with id = {currentScore.Id} ended.");
                         currentScore.IsMoney = true;
                     }
                     else if (currentScore.ScoreType == Score.ScoreTypes.Credit)
                     {
-                        _logger.LogInformation($"Credit with id = {currentScore.Id} ended.");
+                        _logger.Info($"Credit with id = {currentScore.Id} ended.");
                         currentScore.IsMoney = false;
                     }
 
@@ -229,7 +228,7 @@ namespace Bank.Buisness
                     int recipientCollectionIndex = Scores.IndexOf(Scores.First(item => item.Id == currentScore.Id));
                     Scores[recipientCollectionIndex] = currentScore;
 
-                    _logger.LogInformation($"Deposit with id = {currentScore.Id} a calculated capitalization.");
+                    _logger.Info($"Deposit with id = {currentScore.Id} a calculated capitalization.");
                 }
             }
 
@@ -259,7 +258,7 @@ namespace Bank.Buisness
                     int recipientCollectionIndex = Scores.IndexOf(Scores.First(item => item.Id == scoreRecipientId));
                     Scores[recipientCollectionIndex] = recipientScore;
 
-                    _logger.LogInformation($"Money transferred from account id = {senderScore.Id} to account id = {recipientScore.Id}.");
+                    _logger.Info($"Money transferred from account id = {senderScore.Id} to account id = {recipientScore.Id}.");
 
                     return true;
                 }
@@ -270,7 +269,7 @@ namespace Bank.Buisness
             }
             catch
             {
-                _logger.LogError("Send money failed.");
+                _logger.Error("Send money failed.");
                 throw new Exception("Send money failed.");
             }
 

@@ -56,8 +56,7 @@ namespace Bank
             InitializeComponent();
             dateTest = DateTime.Now;
 
-            ILogger<Service> serviceLogger = new LoggerFactory().CreateLogger<Service>();
-            _service = new Service(serviceLogger, new Repository());
+            _service = new Service(new Repository());
 
             _service.SavedJsonObject += _service_SavedJsonObject;
             _service.ImportantScores += _service_ImportantScores;
