@@ -37,10 +37,10 @@ namespace Bank.Buisness
         public ObservableCollection<Score> Scores;
         public ObservableCollection<Client> Clients;
 
-        public Service(Repository repository)
+        public Service()
         {
             _logger = LogManager.GetCurrentClassLogger();
-            _repository = repository;
+            _repository = new Repository();
 
             ClientId = 0;
             ScoreId = 0;
