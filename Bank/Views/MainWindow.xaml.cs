@@ -1,5 +1,6 @@
 ﻿using Bank.Buisness;
 using Bank.Views;
+using MarshalsExceptions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 using System;
@@ -190,7 +191,7 @@ namespace Bank
         /// <exception cref="NotImplementedException"></exception>
         private void _service_ImportantScores(List<Score> scores)
         {
-            foreach(Score score in scores)
+            foreach (Score score in scores)
             {
                 MessageBox.Show("Pleace, pay attention for score with id = " + score.Id);
             }
@@ -307,7 +308,7 @@ namespace Bank
 
                 _service.SaveJsonWithAllData();
             }
-            catch
+            catch (JsonException)
             {
                 MessageBox.Show("Something went wrong...");
             }
@@ -342,7 +343,7 @@ namespace Bank
 
                 Task.Run(() => { _service.CheckDeadline(); });
             }
-            catch
+            catch (JsonException)
             {
                 MessageBox.Show("Something went wrong...");
                 Close();
@@ -356,7 +357,14 @@ namespace Bank
         /// <param name="e"></param>
         private void Button_Click_TestDep(object sender, RoutedEventArgs e)
         {
-            _service.CheckDeadline();
+            try
+            {
+                _service.CheckDeadline();
+            }
+            catch (ScoreException)
+            {
+                MessageBox.Show("Something went wrong...");
+            }
         }
 
         /// <summary>

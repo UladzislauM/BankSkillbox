@@ -1,4 +1,5 @@
 ﻿using Bank.Buisness;
+using MarshalsExceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,35 +41,44 @@ namespace Bank
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (entPeriod != null
-                && int.TryParse($"{entPeriod.Text}", out _period)
-                && Decimal.TryParse($"{entSum.Text}", out _sum))
+            try
             {
-                _period = int.Parse($"{entPeriod.Text}");
-                _sum = Decimal.Parse($"{entSum.Text}");
 
-                //This means that we are working with a deposit
-                if (capitalizationCheckBox.Visibility == Visibility.Visible)
+                if (entPeriod != null
+                    && int.TryParse($"{entPeriod.Text}", out _period)
+                    && Decimal.TryParse($"{entSum.Text}", out _sum))
                 {
-                    if (capitalizationCheckBox.IsChecked == true)
+                    _period = int.Parse($"{entPeriod.Text}");
+                    _sum = Decimal.Parse($"{entSum.Text}");
+
+                    //This means that we are working with a deposit
+                    if (capitalizationCheckBox.Visibility == Visibility.Visible)
                     {
-                        _service.CreateNewScore(Score.ScoreTypes.Deposit, true, _period, _sum);
+                        if (capitalizationCheckBox.IsChecked == true)
+                        {
+                            _service.CreateNewScore(Score.ScoreTypes.Deposit, true, _period, _sum);
+                        }
+                        else
+                        {
+                            _service.CreateNewScore(Score.ScoreTypes.Deposit, false, _period, _sum);
+                        }
                     }
+                    //This means that we are working with a credit
                     else
                     {
-                        _service.CreateNewScore(Score.ScoreTypes.Deposit, false, _period, _sum);
+                        _service.CreateNewScore(Score.ScoreTypes.Credit, false, _period, _sum);
                     }
                 }
-                //This means that we are working with a credit
                 else
                 {
-                    _service.CreateNewScore(Score.ScoreTypes.Credit, false, _period, _sum);
+                    MessageBox.Show("Введите число (не букву)");
                 }
             }
-            else
+            catch (ScoreException)
             {
-                MessageBox.Show("Введите число (не букву)");
+                MessageBox.Show("Something went wrong...");
             }
+
             Close();
         }
 

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using MarshalsExceptions;
 
 namespace Bank.Buisness
 {
@@ -60,29 +61,37 @@ namespace Bank.Buisness
         /// <param name="sum"></param>
         public void CreateNewScore(Score.ScoreTypes scoreType, bool isCapitalization, int period, Decimal sum)
         {
-            Score score = new Score(scoreType);
-
-            score.Id = ScoreId;
-            ScoreId++;
-            DateTime dateTime = DateTime.Now;
-            score.DateScore = dateTime;//TODO change format
-            score.Deadline = score.DateScore.AddMonths(period);
-            score.Balance = sum;
-            score.IsСapitalization = isCapitalization;
-            score.Client = Clients[(int)ClientId];
-            score.IsActive = true;
-            if (scoreType == Score.ScoreTypes.Deposit)
+            try
             {
-                score.IsMoney = false;
+                Score score = new Score(scoreType);
+
+                score.Id = ScoreId;
+                ScoreId++;
+                DateTime dateTime = DateTime.Now;
+                score.DateScore = dateTime;//TODO change format
+                score.Deadline = score.DateScore.AddMonths(period);
+                score.Balance = sum;
+                score.IsСapitalization = isCapitalization;
+                score.Client = Clients[(int)ClientId];
+                score.IsActive = true;
+                if (scoreType == Score.ScoreTypes.Deposit)
+                {
+                    score.IsMoney = false;
+                }
+                else if (scoreType == Score.ScoreTypes.Credit)
+                {
+                    score.IsMoney = true;
+                }
+
+                _logger.Info($"A {score.ScoreType} account has been created for the user {score.Client.FirstName} {score.Client.LastName}");
+
+                Scores.Add(score);
             }
-            else if (scoreType == Score.ScoreTypes.Credit)
+            catch
             {
-                score.IsMoney = true;
+                _logger.Error("Something went wrong with the creation of the Score");
+                throw new ScoreException("Something went wrong with the creation of the Score");
             }
-
-            _logger.Info($"A {score.ScoreType} account has been created for the user {score.Client.FirstName} {score.Client.LastName}");
-
-            Scores.Add(score);
         }
 
         /// <summary>
@@ -91,14 +100,22 @@ namespace Bank.Buisness
         /// <param name="status"></param>
         public void CreateNewClient(Client.Statuses status)
         {
-            Client client = new Client(status);
+            try
+            {
+                Client client = new Client(status);
 
-            client.Id = ClientId;
-            ClientId++;
+                client.Id = ClientId;
+                ClientId++;
 
-            _logger.Info($"Client {client.FirstName} {client.LastName} has been created.");
+                _logger.Info($"Client {client.FirstName} {client.LastName} has been created.");
 
-            Clients.Add(client);
+                Clients.Add(client);
+            }
+            catch
+            {
+                _logger.Error("Something went wrong with the creation of the Client");
+                throw new ClientException("Something went wrong with the creation of the Client");
+            }
         }
 
         /// <summary>
@@ -120,7 +137,7 @@ namespace Bank.Buisness
             catch
             {
                 _logger.Error("General Json don't save");
-                throw new Exception("General Json don't save");
+                throw new JsonException("General Json don't save");
             }
         }
 
@@ -153,8 +170,8 @@ namespace Bank.Buisness
             }
             catch
             {
-                _logger.Error($"Json data saved.");
-                throw new Exception("Save json data failed");
+                _logger.Error($"Save json data failed");
+                throw new JsonException("Save json data failed");
             }
         }
 
@@ -184,7 +201,7 @@ namespace Bank.Buisness
             catch
             {
                 _logger.Error($"Open Json failed.");
-                throw new Exception("Open Json failed");
+                throw new JsonException("Open Json failed");
             }
         }
 
@@ -193,48 +210,56 @@ namespace Bank.Buisness
         /// </summary>
         public void CheckDeadline()
         {
-            DateTime currentData = DateTime.Now;
-            List<Score> identifiedScores = new List<Score>();
-
-            foreach (Score currentScore in Scores)
+            try
             {
-                DateTime checkingData = currentScore.Deadline;
+                DateTime currentData = DateTime.Now;
+                List<Score> identifiedScores = new List<Score>();
 
-                if (currentData >= checkingData)
+                foreach (Score currentScore in Scores)
                 {
-                    currentScore.IsActive = false;
+                    DateTime checkingData = currentScore.Deadline;
 
-                    if (currentScore.ScoreType == Score.ScoreTypes.Deposit)
+                    if (currentData >= checkingData)
                     {
-                        _logger.Info($"Deposit with id = {currentScore.Id} ended.");
-                        currentScore.IsMoney = true;
-                    }
-                    else if (currentScore.ScoreType == Score.ScoreTypes.Credit)
-                    {
-                        _logger.Info($"Credit with id = {currentScore.Id} ended.");
-                        currentScore.IsMoney = false;
-                    }
+                        currentScore.IsActive = false;
 
-                    identifiedScores.Add(currentScore);
+                        if (currentScore.ScoreType == Score.ScoreTypes.Deposit)
+                        {
+                            _logger.Info($"Deposit with id = {currentScore.Id} ended.");
+                            currentScore.IsMoney = true;
+                        }
+                        else if (currentScore.ScoreType == Score.ScoreTypes.Credit)
+                        {
+                            _logger.Info($"Credit with id = {currentScore.Id} ended.");
+                            currentScore.IsMoney = false;
+                        }
+
+                        identifiedScores.Add(currentScore);
+                    }
+                    //Checking deposit's capitalisation
+                    else if (currentScore.ScoreType == Score.ScoreTypes.Deposit &&
+                        currentScore.IsСapitalization == true &&
+                        currentScore.DateLastDividends.AddMonths(1) <= checkingData)
+                    {
+                        currentScore.DateLastDividends = checkingData;
+                        currentScore.Balance += Decimal.Multiply(currentScore.Balance, currentScore.Persents);
+
+                        int recipientCollectionIndex = Scores.IndexOf(Scores.First(item => item.Id == currentScore.Id));
+                        Scores[recipientCollectionIndex] = currentScore;
+
+                        _logger.Info($"Deposit with id = {currentScore.Id} a calculated capitalization.");
+                    }
                 }
-                //Checking deposit's capitalisation
-                else if (currentScore.ScoreType == Score.ScoreTypes.Deposit &&
-                    currentScore.IsСapitalization == true &&
-                    currentScore.DateLastDividends.AddMonths(1) <= checkingData)
+
+                if (identifiedScores.Count > 0)
                 {
-                    currentScore.DateLastDividends = checkingData;
-                    currentScore.Balance += Decimal.Multiply(currentScore.Balance, currentScore.Persents);
-
-                    int recipientCollectionIndex = Scores.IndexOf(Scores.First(item => item.Id == currentScore.Id));
-                    Scores[recipientCollectionIndex] = currentScore;
-
-                    _logger.Info($"Deposit with id = {currentScore.Id} a calculated capitalization.");
+                    ImportantScores.Invoke(identifiedScores);
                 }
             }
-
-            if (identifiedScores.Count > 0)
+            catch
             {
-                ImportantScores.Invoke(identifiedScores);
+                _logger.Error("Score verification failed");
+                throw new ScoreException("Score verification failed");
             }
         }
 
@@ -270,7 +295,7 @@ namespace Bank.Buisness
             catch
             {
                 _logger.Error("Send money failed.");
-                throw new Exception("Send money failed.");
+                throw new TransactionException("Send money failed.");
             }
 
         }

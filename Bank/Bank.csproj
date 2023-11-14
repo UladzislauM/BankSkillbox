@@ -193,10 +193,17 @@
       <Project>{251d61c6-e48d-41cc-8a60-34f71de82ae1}</Project>
       <Name>EntitiesForBankApp</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Marshal%27sExceptions\MarshalsExceptions.csproj">
+      <Project>{58c0363c-2ee3-4706-979a-73389276dfae}</Project>
+      <Name>MarshalsExceptions</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MyNotifications\MyNotifications.csproj">
       <Project>{53527b23-8e21-4da5-80c6-062b76489af1}</Project>
       <Name>MyNotifications</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
