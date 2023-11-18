@@ -1,4 +1,5 @@
 ﻿using Bank.Buisness;
+using MarshalsExceptions;
 using System.Windows;
 
 namespace Bank
@@ -24,7 +25,14 @@ namespace Bank
         /// </summary>
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            _service.CreateNewClient(_clientStatus);
+            try
+            {
+                _service.CreateNewClient(_clientStatus);
+            }
+            catch (ClientException)
+            {
+                MessageBox.Show("Something went wrong...");
+            }
 
             Close();
         }

@@ -1,4 +1,5 @@
 ﻿using Bank.Buisness;
+using MarshalsExceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,7 +41,6 @@ namespace Bank.Views
         {
             try
             {
-
                 if (Clients_Box.SelectedItem != null)
                 {
                     var recipientScore = (ViewObject)Clients_Box.SelectedItem;
@@ -67,7 +67,7 @@ namespace Bank.Views
                     MessageBox.Show("Choose recipient.");
                 }
             }
-            catch
+            catch (TransactionException)
             {
                 MessageBox.Show("Unable to send money");
             }

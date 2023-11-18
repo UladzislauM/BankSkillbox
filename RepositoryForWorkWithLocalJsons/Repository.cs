@@ -52,7 +52,7 @@ namespace Bank
 
                 if (!File.Exists(address))
                 {
-                    MessageBox.Show("The file doesn't exist, create a new one, or specify the path to another one");
+                    throw new Exception("The file doesn't exist, create a new one, or specify the path to another one");
                 }
 
                 using (StreamReader reader = File.OpenText(address))
