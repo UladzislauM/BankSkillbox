@@ -335,8 +335,7 @@ namespace Bank
             }
             catch (JsonException)
             {
-                MessageBox.Show("Something went wrong...");
-                Close();
+                MessageBox.Show("Something went wrong with open json...");
             }
         }
 
