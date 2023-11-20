@@ -6,106 +6,130 @@
         mc:Ignorable="d"
         Title="MainWindow" 
         Height="450" 
-        MaxHeight="450"
+        MinHeight="450"
         Width="1000"
-        MaxWidth="1000">
-    <Grid>
-        <TreeView x:Name="twBank" 
+        MinWidth="1000">
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="File">
+                <MenuItem Header="Open json" 
+                          Click="Button_Click_OpenJson"/>
+                <MenuItem Header="Save json"
+                          Click="Button_Click_SaveJson"/>
+                <MenuItem Header="Exit" Click="MenuItem_Exit_Click"/>
+            </MenuItem>
+            <MenuItem Header="Help">
+                <MenuItem Header="Help"/>
+            </MenuItem>
+        </Menu>
+
+        <StatusBar DockPanel.Dock="Bottom">
+
+        </StatusBar>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height = "*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width = "*"/>
+            </Grid.ColumnDefinitions>
+            <TreeView x:Name="twBank" 
             HorizontalAlignment="Left" 
               Height="370"
                   Margin="317,43,0,0" 
               VerticalAlignment="Top" 
               Width="247">
 
-            <TextBox>Банк</TextBox>
-            <TreeViewItem Header="Все клиенты"
+                <TextBox>Банк</TextBox>
+                <TreeViewItem Header="Все клиенты"
                           Selected="TreeViewItem_Selected_AllClients"/>
-            <TreeViewItem Header="Отдел работы с обычными клиентами"
+                <TreeViewItem Header="Отдел работы с обычными клиентами"
                           x:Name="GeneralClients">
-                <TreeViewItem Header="Клиенты" 
+                    <TreeViewItem Header="Клиенты" 
                               Selected="TreeViewItem_Selected_GeneralClients"/>
-                <TreeViewItem Header="Счета" 
+                    <TreeViewItem Header="Счета" 
                               Selected="TreeViewItem_Selected_Scores"/>
-                <TreeViewItem Header="Вклады" 
+                    <TreeViewItem Header="Вклады" 
                               Selected="TreeViewItem_Selected_Deposits"/>
-                <TreeViewItem Header="Кредиты"
+                    <TreeViewItem Header="Кредиты"
                               Selected="TreeViewItem_Selected_Credits"/>
-            </TreeViewItem>
-            <TreeViewItem Header="Отдел работы с VIP клиентами"
+                </TreeViewItem>
+                <TreeViewItem Header="Отдел работы с VIP клиентами"
                           x:Name="VIPClients">
-                <TreeViewItem Header="Клиенты" 
+                    <TreeViewItem Header="Клиенты" 
                               Selected="TreeViewItem_Selected_VIPClients"/>
-                <TreeViewItem Header="Счета" 
+                    <TreeViewItem Header="Счета" 
                               Selected="TreeViewItem_Selected_VIPScores"/>
-                <TreeViewItem Header="Вклады" 
+                    <TreeViewItem Header="Вклады" 
                               Selected="TreeViewItem_Selected_VIPDeposits"/>
-                <TreeViewItem Header="Кредиты"
+                    <TreeViewItem Header="Кредиты"
                               Selected="TreeViewItem_Selected_VIPCredits"/>
-            </TreeViewItem>
-            <TreeViewItem Header="Отдел работы с юридическими лицами"
+                </TreeViewItem>
+                <TreeViewItem Header="Отдел работы с юридическими лицами"
                           x:Name="CorpClients">
-                <TreeViewItem Header="Клиенты" 
+                    <TreeViewItem Header="Клиенты" 
                               Selected="TreeViewItem_Selected_CorpClients"/>
-                <TreeViewItem Header="Счета" 
+                    <TreeViewItem Header="Счета" 
                               Selected="TreeViewItem_Selected_CorpScores"/>
-                <TreeViewItem Header="Вклады" 
+                    <TreeViewItem Header="Вклады" 
                               Selected="TreeViewItem_Selected_CorpDeposits"/>
-                <TreeViewItem Header="Кредиты"
+                    <TreeViewItem Header="Кредиты"
                               Selected="TreeViewItem_Selected_CorpCredits"/>
-            </TreeViewItem>
+                </TreeViewItem>
 
-        </TreeView>
+            </TreeView>
 
-        <DataGrid x:Name="dgClientsList"
+            <DataGrid x:Name="dgClientsList"
             AutoGenerateColumns="False" 
             Margin="0,41,681.6,8" 
             CanUserSortColumns="True" 
-            GotMouseCapture="dgClientsList_GotMouseCapture_Clients">
-            <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding Path = Id, UpdateSourceTrigger=PropertyChanged}"
+            GotMouseCapture="dgClientsList_GotMouseCapture_Clients"
+                      >
+                <DataGrid.Columns>
+                    <DataGridTextColumn Binding="{Binding Path = Id, UpdateSourceTrigger=PropertyChanged}"
                                     Header="№ кл." 
                                     Width="45"
                                     IsReadOnly="True"/>
-                <DataGridTextColumn Binding ="{Binding Path = FirstName, UpdateSourceTrigger=PropertyChanged}" 
+                    <DataGridTextColumn Binding ="{Binding Path = FirstName, UpdateSourceTrigger=PropertyChanged}" 
                                     Header="Имя" 
                                     Width="90"/>
-                <DataGridTextColumn Binding="{Binding Path = LastName, UpdateSourceTrigger=PropertyChanged}"
+                    <DataGridTextColumn Binding="{Binding Path = LastName, UpdateSourceTrigger=PropertyChanged}"
                                     Header="Фамилия" 
                                     Width="90"/>
-            </DataGrid.Columns>
-        </DataGrid>
+                </DataGrid.Columns>
+            </DataGrid>
 
-        <DataGrid x:Name="dgScoresList"
+            <DataGrid x:Name="dgScoresList"
                   AutoGenerateColumns="False" 
                   Margin="569,43,163.6,6" 
                   CanUserSortColumns="True"
                   GotMouseCapture="dgScoresList_GotMouseCapture_Scores">
-            <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding Path = Id, UpdateSourceTrigger=PropertyChanged}"
+                <DataGrid.Columns>
+                    <DataGridTextColumn Binding="{Binding Path = Id, UpdateSourceTrigger=PropertyChanged}"
                                     Header="№ сч." 
                                     Width="45"
                                     IsReadOnly="True"/>
-                <DataGridTextColumn Binding = "{Binding Path = ScoreType, UpdateSourceTrigger=PropertyChanged}"
+                    <DataGridTextColumn Binding = "{Binding Path = ScoreType, UpdateSourceTrigger=PropertyChanged}"
                                     Header="Тип сч."
                                     Width="50"
                                     />
-                <DataGridTextColumn Binding = "{Binding Path = Balance, UpdateSourceTrigger=PropertyChanged}"
+                    <DataGridTextColumn Binding = "{Binding Path = Balance, UpdateSourceTrigger=PropertyChanged}"
                                     Header="Баланс"
                                     Width="50"
                                     />
-                <DataGridTextColumn Binding = "{Binding Path = Deadline, UpdateSourceTrigger=PropertyChanged}"
+                    <DataGridTextColumn Binding = "{Binding Path = Deadline, UpdateSourceTrigger=PropertyChanged}"
                                     Header="Срок дейст."
                                     Width="80"
                                     />
-            </DataGrid.Columns>
-        </DataGrid>
-        <Button Content="Добавить Клиента"
+                </DataGrid.Columns>
+            </DataGrid>
+            <Button Content="Добавить Клиента"
                 HorizontalAlignment="Left" 
                 Margin="10,10,0,0"
                 VerticalAlignment="Top"
                 Width="120"
                 Click="Button_Click_AddClient"/>
-        <Button x:Name="Send_Money_Button"
+            <Button x:Name="Send_Money_Button"
                 Content="Перевести деньги в:"
                 HorizontalAlignment="Left" 
                 Margin="260,10,0,0"
@@ -113,31 +137,32 @@
                 Width="120"
                 Click="Button_Click_SendMoney"
                 Visibility="Hidden"/>
-        <Button Content="Добавить счет"
+            <Button Content="Добавить счет"
                 HorizontalAlignment="Left" 
                 Margin="135,10,0,0"
                 VerticalAlignment="Top"
                 Width="120"
                 Click="Button_Click_AddScore"
                 />
-        <Button Content="Проверка Срока выплаты"
+            <Button Content="Проверка Срока выплаты"
                 x:Name="buttonTest"
                 HorizontalAlignment="Left" 
                 Margin="385,10,0,0"
                 VerticalAlignment="Top"
                 Width="155"
                 Click="Button_Click_TestDep"/>
-        <Button Content="Сохранить в json"
+            <Button Content="Сохранить в json"
                 HorizontalAlignment="Left" 
                 Margin="881,10,0,0"
                 VerticalAlignment="Top"
                 Width="103"
                 Click="Button_Click_SaveJson"/>
-        <Button Content="Загрузить json"
+            <Button Content="Загрузить json"
                 HorizontalAlignment="Left" 
                 Margin="881,34,0,0"
                 VerticalAlignment="Top"
                 Width="103"
                 Click="Button_Click_OpenJson"/>
-    </Grid>
+        </Grid>
+    </DockPanel>
 </Window>
