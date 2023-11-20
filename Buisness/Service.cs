@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading.Tasks;
 using MarshalsExceptions;
 
 namespace Bank.Buisness
@@ -297,7 +296,6 @@ namespace Bank.Buisness
                 _logger.Error("Send money failed.");
                 throw new TransactionException("Send money failed.");
             }
-
         }
 
     }
