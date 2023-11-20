@@ -5,9 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="MainWindow" 
-        Height="450" 
+        MaxHeight="450" 
         MinHeight="450"
-        Width="1000"
+        MaxWidth="1000"
         MinWidth="1000">
     <DockPanel>
         <Menu DockPanel.Dock="Top">
@@ -33,14 +33,16 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width = "*"/>
             </Grid.ColumnDefinitions>
+
             <TreeView x:Name="twBank" 
-            HorizontalAlignment="Left" 
-              Height="370"
-                  Margin="317,43,0,0" 
-              VerticalAlignment="Top" 
-              Width="247">
+                HorizontalAlignment="Left" 
+                Height="370"
+                Margin="317,43,0,0" 
+                VerticalAlignment="Top" 
+                Width="247">
 
                 <TextBox>Банк</TextBox>
+
                 <TreeViewItem Header="Все клиенты"
                           Selected="TreeViewItem_Selected_AllClients"/>
                 <TreeViewItem Header="Отдел работы с обычными клиентами"
@@ -76,15 +78,13 @@
                     <TreeViewItem Header="Кредиты"
                               Selected="TreeViewItem_Selected_CorpCredits"/>
                 </TreeViewItem>
-
             </TreeView>
 
             <DataGrid x:Name="dgClientsList"
             AutoGenerateColumns="False" 
             Margin="0,41,681.6,8" 
             CanUserSortColumns="True" 
-            GotMouseCapture="dgClientsList_GotMouseCapture_Clients"
-                      >
+            GotMouseCapture="dgClientsList_GotMouseCapture_Clients">
                 <DataGrid.Columns>
                     <DataGridTextColumn Binding="{Binding Path = Id, UpdateSourceTrigger=PropertyChanged}"
                                     Header="№ кл." 
@@ -123,6 +123,7 @@
                                     />
                 </DataGrid.Columns>
             </DataGrid>
+
             <Button Content="Добавить Клиента"
                 HorizontalAlignment="Left" 
                 Margin="10,10,0,0"
