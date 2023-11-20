@@ -1,6 +1,4 @@
-﻿using System.Numerics;
-
-namespace Bank
+﻿namespace Bank
 {
     public class Client : MyNotification
     {
