@@ -20,7 +20,7 @@
         /// <summary>
         /// Credit history
         /// </summary>
-        private double _history;
+        private string _history;
 
         /// <summary>
         /// Client's status
@@ -37,7 +37,7 @@
             Status = status;
         }
 
-        public Statuses Status { get; private set; }
+        public Statuses Status { get; set; }
 
         public long Id
         {
@@ -75,7 +75,7 @@
             }
         }
 
-        public double History
+        public string History
         {
             get => _history;
             set

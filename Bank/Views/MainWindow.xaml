@@ -84,7 +84,8 @@
             AutoGenerateColumns="False" 
             Margin="0,41,681.6,8" 
             CanUserSortColumns="True" 
-            GotMouseCapture="dgClientsList_GotMouseCapture_Clients">
+            GotMouseCapture="dgClientsList_GotMouseCapture_Clients"
+            CellEditEnding="dgClientsList_CellEditEnding">
                 <DataGrid.Columns>
                     <DataGridTextColumn Binding="{Binding Path = Id, UpdateSourceTrigger=PropertyChanged}"
                                     Header="№ кл." 
@@ -164,6 +165,12 @@
                 VerticalAlignment="Top"
                 Width="103"
                 Click="Button_Click_OpenJson"/>
+            <Button Content="Сохранить в DB"
+                HorizontalAlignment="Left" 
+                Margin="881,73,0,0"
+                VerticalAlignment="Top"
+                Width="103"
+                Click="Button_Click_SaveAllToDB"/>
         </Grid>
     </DockPanel>
 </Window>

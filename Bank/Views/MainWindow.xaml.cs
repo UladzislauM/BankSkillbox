@@ -18,14 +18,14 @@ namespace Bank
         /// <summary>
         /// Дата проверки. Для выдачи Суммы
         /// </summary>
-        public DateTime dateTest;//TODO
+        //public DateTime dateTest;//TODO
 
         private readonly Service _service;
 
         public MainWindow()
         {
             InitializeComponent();
-            dateTest = DateTime.Now;
+            //dateTest = DateTime.Now;
 
             _service = new Service();
 
@@ -214,6 +214,25 @@ namespace Bank
         }
 
         /// <summary>
+        /// Update client data from the table column.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void dgClientsList_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+            try
+            {
+                Client editedClient = (Client)e.Row.Item;
+
+                _service.UpdateClientIntoDB(editedClient);
+            }
+            catch
+            {
+                MessageBox.Show("Something went wrong");
+            }
+        }
+
+        /// <summary>
         /// The focus of the line in the nameplate with the score's name
         /// </summary>
         /// <param name="sender"></param>
@@ -340,6 +359,23 @@ namespace Bank
         }
 
         /// <summary>
+        /// Click for saving all data to the DB.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Button_Click_SaveAllToDB(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                _service.SaveAllDataToDB();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);//TODO
+            }
+        }
+
+        /// <summary>
         /// Check deadline all scores
         /// </summary>
         /// <param name="sender"></param>
@@ -394,7 +430,7 @@ namespace Bank
 
             if (status == null)
             {
-                dgClientsList.ItemsSource = _service.Clients;
+                dgClientsList.ItemsSource = _service.LoadAllClientsFromDB();
             }
             else
             {

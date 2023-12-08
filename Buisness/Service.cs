@@ -22,7 +22,7 @@ namespace Bank.Buisness
         /// <summary>
         /// Table client's focus
         /// </summary>
-        public long ClientId;//TODO sometimes create new client with 0 id
+        public long ClientId;
 
         /// <summary>
         /// Table score's focus
@@ -45,8 +45,8 @@ namespace Bank.Buisness
             ClientId = 0;
             ScoreId = 0;
 
-            Scores = new ObservableCollection<Score>();//TODO add read from file or create new
-            Clients = new ObservableCollection<Client>();//TODO add read from file or create new
+            Scores = new ObservableCollection<Score>();
+            Clients = new ObservableCollection<Client>();
 
             JsonAddress = "";
         }
@@ -58,16 +58,20 @@ namespace Bank.Buisness
         /// <param name="isCapitalization"></param>
         /// <param name="period"></param>
         /// <param name="sum"></param>
+        /// <exception cref="DBException"></exception>
+        /// <exception cref="ScoreException"></exception>
         public void CreateNewScore(Score.ScoreTypes scoreType, bool isCapitalization, int period, Decimal sum)
         {
             try
             {
+                if (ScoreId == 0)
+                {
+                    LoadAllScoresFromDB();
+                }
+
                 Score score = new Score(scoreType);
 
-                score.Id = ScoreId;
-                ScoreId++;
-                DateTime dateTime = DateTime.Now;
-                score.DateScore = dateTime;//TODO change format
+                score.Id = ScoreId++;
                 score.Deadline = score.DateScore.AddMonths(period);
                 score.Balance = sum;
                 score.IsСapitalization = isCapitalization;
@@ -82,9 +86,16 @@ namespace Bank.Buisness
                     score.IsMoney = true;
                 }
 
+                Scores.Add(score);
+
                 _logger.Info($"A {score.ScoreType} account has been created for the user {score.Client.FirstName} {score.Client.LastName}");
 
-                Scores.Add(score);
+                _repository.SaveScoreToDB(score);
+            }
+            catch (DBException)
+            {
+                _logger.Error("Something went wrong with DB");
+                throw new DBException("Something went wrong with DB");
             }
             catch
             {
@@ -94,21 +105,51 @@ namespace Bank.Buisness
         }
 
         /// <summary>
+        /// Update score infirmation into DB.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <exception cref="DBException"></exception>
+        public void UpdateScoreIntoDB(Score score)
+        {
+            try
+            {
+                _repository.UpdateScoreIntoDB(score);
+            }
+            catch (DBException)
+            {
+                _logger.Error("Something went wrong with DB");
+                throw new DBException("Something went wrong with DB");
+            }
+        }
+
+        /// <summary>
         /// Create and add to view collection client
         /// </summary>
         /// <param name="status"></param>
+        /// <exception cref="DBException"></exception>
+        /// <exception cref="ClientException"></exception>
         public void CreateNewClient(Client.Statuses status)
         {
             try
             {
-                Client client = new Client(status);
+                if (ClientId == 0)
+                {
+                    LoadAllClientsFromDB();
+                }
 
-                client.Id = ClientId;
-                ClientId++;
+                Client client = new Client(status);
+                client.Id = ClientId++;
+
+                Clients.Add(client);
 
                 _logger.Info($"Client {client.FirstName} {client.LastName} has been created.");
 
-                Clients.Add(client);
+                _repository.SaveClientToDB(client);
+            }
+            catch (DBException)
+            {
+                _logger.Error("Something went wrong with DB");
+                throw new DBException("Something went wrong with DB");
             }
             catch
             {
@@ -118,8 +159,45 @@ namespace Bank.Buisness
         }
 
         /// <summary>
-        /// Save all data
+        /// Update client infirmation into DB.
         /// </summary>
+        /// <param name="client"></param>
+        /// <exception cref="DBException"></exception>
+        public void UpdateClientIntoDB(Client client)
+        {
+            try
+            {
+                _repository.UpdateClientIntoDB(client);
+            }
+            catch (DBException)
+            {
+                _logger.Error("Something went wrong with DB");
+                throw new DBException("Something went wrong with DB");
+            }
+        }
+
+        /// <summary>
+        /// Save all data to the DB
+        /// </summary>
+        /// <exception cref="DBException"></exception>
+        public void SaveAllDataToDB()
+        {
+            try
+            {
+                _repository.SaveAllDataToDB(Clients.ToList(), Scores.ToList()); //TODO checked for same data
+
+                _logger.Info($"General DB data saved");
+            }
+            catch
+            {
+                throw new DBException("Something went wrong while saveing data to the DB");
+            }
+        }
+
+        /// <summary>
+        /// Save all data to Json
+        /// </summary>
+        /// <exception cref="JsonException"></exception>
         public void SaveJsonWithAllData()
         {
             try
@@ -129,9 +207,9 @@ namespace Bank.Buisness
                 data.Clients = Clients;
                 data.Scores = Scores;
 
-                _logger.Info($"General Json saved");
-
                 SaveJsonData<UnionData>(data);
+
+                _logger.Info($"General Json saved");
             }
             catch
             {
@@ -145,18 +223,18 @@ namespace Bank.Buisness
         /// </summary>
         /// <param name="objectForSaveJson"></param>
         /// <param name="address"></param>
-        /// <exception cref="Exception"></exception>
+        /// <exception cref="JsonException"></exception>
         public bool SaveJsonData<T>(T objectForSaveJson)
         {
             try
             {
                 if (JsonAddress == "")
                 {
-                    string fileName = "BankData_" + DateTime.Now.ToString("yyyyMMdd_HHmm") + ".json";
+                    string fileName = "BankData_" + DateTime.Now.ToString("yyyy-MM-dd_HH.mm") + ".json";
                     JsonAddress = $@"{Environment.CurrentDirectory}\\WorkData\\{fileName}";
                 }
 
-                bool stateOfSave = _repository.SaveData<T>(objectForSaveJson, JsonAddress);
+                bool stateOfSave = _repository.SaveDataToJson<T>(objectForSaveJson, JsonAddress);
 
                 if (stateOfSave)
                 {
@@ -182,7 +260,7 @@ namespace Bank.Buisness
         {
             try
             {
-                UnionData unionData = _repository.LoadDataAll<UnionData>(JsonAddress);
+                UnionData unionData = _repository.LoadAllDataFromJson<UnionData>(JsonAddress);
 
                 if (unionData.Clients != null)
                 {
@@ -201,6 +279,58 @@ namespace Bank.Buisness
             {
                 _logger.Error($"Open Json failed.");
                 throw new JsonException("Open Json failed");
+            }
+        }
+
+        /// <summary>
+        /// Loading all clients from the DB.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="DBException"></exception>
+        public ObservableCollection<Client> LoadAllClientsFromDB()
+        {
+            try
+            {
+                ObservableCollection<Client> clients = new ObservableCollection<Client>(_repository.LoadEntityDataFromDB<Client>());
+
+                if (clients.Count != 0)
+                {
+                    Clients = clients;
+                    ClientId = clients[clients.Count - 1].Id;
+                    ClientId++;
+                }
+
+                return clients;
+            }
+            catch
+            {
+                throw new DBException("Load Clients exception");
+            }
+        }
+
+        /// <summary>
+        /// Loading all scores from the DB.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="DBException"></exception>
+        public ObservableCollection<Score> LoadAllScoresFromDB()
+        {
+            try
+            {
+                ObservableCollection<Score> scores = new ObservableCollection<Score>(_repository.LoadEntityDataFromDB<Score>());
+
+                if (scores.Count != 0)
+                {
+                    Scores = scores;
+                    ScoreId = scores[scores.Count - 1].Id;
+                    ScoreId++;
+                }
+
+                return scores;
+            }
+            catch
+            {
+                throw new DBException("Load Scores exception");
             }
         }
 
@@ -241,7 +371,7 @@ namespace Bank.Buisness
                         currentScore.DateLastDividends.AddMonths(1) <= checkingData)
                     {
                         currentScore.DateLastDividends = checkingData;
-                        currentScore.Balance += Decimal.Multiply(currentScore.Balance, currentScore.Persents);
+                        currentScore.Balance += Decimal.Multiply(currentScore.Balance, currentScore.Percent);
 
                         int recipientCollectionIndex = Scores.IndexOf(Scores.First(item => item.Id == currentScore.Id));
                         Scores[recipientCollectionIndex] = currentScore;

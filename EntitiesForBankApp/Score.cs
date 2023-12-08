@@ -17,7 +17,7 @@ namespace Bank
         /// <summary>
         /// Interest on the account
         /// </summary>
-        private Decimal _persents;
+        private Decimal _percent;
 
         /// <summary>
         /// Score's date
@@ -62,6 +62,8 @@ namespace Bank
         public Score(ScoreTypes scoreType)
         {
             ScoreType = scoreType;
+            _dateScore = DateTime.Now;
+            _dateLastDividends = DateTime.Now;
         }
 
         public ScoreTypes ScoreType
@@ -100,15 +102,15 @@ namespace Bank
             }
         }
 
-        public Decimal Persents
+        public Decimal Percent
         {
-            get => _persents;
+            get => _percent;
             set
             {
-                if (_persents == value)
+                if (_percent == value)
                     return;
-                this._persents = value;
-                OnPropertyChanged(nameof(Persents));
+                this._percent = value;
+                OnPropertyChanged(nameof(Percent));
             }
         }
 
@@ -118,7 +120,7 @@ namespace Bank
             set
             {
                 if (_dateScore == value)
-                    return;
+                    return; 
                 OnPropertyChanged(nameof(DateScore));
             }
         }
