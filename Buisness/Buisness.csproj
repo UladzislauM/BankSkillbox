@@ -47,9 +47,9 @@
       <Project>{53527b23-8e21-4da5-80c6-062b76489af1}</Project>
       <Name>MyNotifications</Name>
     </ProjectReference>
-    <ProjectReference Include="..\RepositoryForWorkWithLocalJsons\Repository.csproj">
+    <ProjectReference Include="..\RepositoryForWorkWithLocalJsons\Repositories.csproj">
       <Project>{5fc59044-ec59-4d14-8bdd-83ba5a707975}</Project>
-      <Name>Repository</Name>
+      <Name>Repositories</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

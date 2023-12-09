@@ -16,7 +16,8 @@ namespace Bank.Buisness
         public string DBName { get; set; }
         public string DBSource { get; set; }
         private readonly NLog.Logger _logger;
-        private readonly RepositoryForDB _repository;
+        private readonly RepositoryForDB _repositoryForDB;
+        private readonly RepositoryForJson _repositoryForJson;
 
         public event Action<object> SavedJsonObject;
         public event Action<List<Score>> ImportantScores;
@@ -42,7 +43,8 @@ namespace Bank.Buisness
         public Service()
         {
             _logger = LogManager.GetCurrentClassLogger();
-            _repository = new RepositoryForDB(DBSource ?? @"(localdb)\MSSQLLocalDB", DBName ?? "bankdb");
+            _repositoryForDB = new RepositoryForDB(DBSource ?? @"(localdb)\MSSQLLocalDB", DBName ?? "bankdb");
+            _repositoryForJson = new RepositoryForJson();
 
             ClientId = 0;
             ScoreId = 0;
@@ -92,7 +94,7 @@ namespace Bank.Buisness
 
                 _logger.Info($"A {score.ScoreType} account has been created for the user {score.Client.FirstName} {score.Client.LastName}");
 
-                _repository.SaveScoreToDB(score);
+                _repositoryForDB.SaveScoreToDB(score);
             }
             catch (DBException)
             {
@@ -115,7 +117,7 @@ namespace Bank.Buisness
         {
             try
             {
-                _repository.UpdateScoreIntoDB(score);
+                _repositoryForDB.UpdateScoreIntoDB(score);
             }
             catch (DBException)
             {
@@ -148,7 +150,7 @@ namespace Bank.Buisness
 
                 _logger.Info($"Client {client.FirstName} {client.LastName} has been created.");
 
-                _repository.SaveClientToDB(client);
+                _repositoryForDB.SaveClientToDB(client);
             }
             catch (DBException)
             {
@@ -171,7 +173,7 @@ namespace Bank.Buisness
         {
             try
             {
-                _repository.UpdateClientIntoDB(client);
+                _repositoryForDB.UpdateClientIntoDB(client);
             }
             catch (DBException)
             {
@@ -188,7 +190,7 @@ namespace Bank.Buisness
         {
             try
             {
-                _repository.SaveAllDataToDB(Clients.ToList(), Scores.ToList()); //TODO checked for same data
+                _repositoryForDB.SaveAllDataToDB(Clients.ToList(), Scores.ToList()); //TODO checked for same data
 
                 _logger.Info($"General DB data saved");
             }
@@ -238,7 +240,7 @@ namespace Bank.Buisness
                     JsonAddress = $@"{Environment.CurrentDirectory}\\WorkData\\{fileName}";
                 }
 
-                bool stateOfSave = _repository.SaveDataToJson<T>(objectForSaveJson, JsonAddress);
+                bool stateOfSave = _repositoryForJson.SaveDataToJson<T>(objectForSaveJson, JsonAddress);
 
                 if (stateOfSave)
                 {
@@ -264,7 +266,7 @@ namespace Bank.Buisness
         {
             try
             {
-                UnionData unionData = _repository.LoadAllDataFromJson<UnionData>(JsonAddress);
+                UnionData unionData = _repositoryForJson.LoadAllDataFromJson<UnionData>(JsonAddress);
 
                 if (unionData.Clients != null)
                 {
@@ -295,7 +297,7 @@ namespace Bank.Buisness
         {
             try
             {
-                ObservableCollection<Client> clients = new ObservableCollection<Client>(_repository.FindEntitiesDataFromDB<Client>());
+                ObservableCollection<Client> clients = new ObservableCollection<Client>(_repositoryForDB.FindEntitiesDataFromDB<Client>());
 
                 if (clients.Count != 0)
                 {
@@ -321,7 +323,7 @@ namespace Bank.Buisness
         {
             try
             {
-                ObservableCollection<Score> scores = new ObservableCollection<Score>(_repository.FindEntitiesDataFromDB<Score>());
+                ObservableCollection<Score> scores = new ObservableCollection<Score>(_repositoryForDB.FindEntitiesDataFromDB<Score>());
 
                 if (scores.Count != 0)
                 {
@@ -417,13 +419,13 @@ namespace Bank.Buisness
 
                     int senderCollectionIndex = Scores.IndexOf(Scores.First(item => item.Id == ScoreId));
                     Scores[senderCollectionIndex] = senderScore;
-                    _repository.UpdateScoreIntoDB(senderScore);
+                    _repositoryForDB.UpdateScoreIntoDB(senderScore);
 
                     recipientScore.Balance += sum;
 
                     int recipientCollectionIndex = Scores.IndexOf(Scores.First(item => item.Id == scoreRecipientId));
                     Scores[recipientCollectionIndex] = recipientScore;
-                    _repository.UpdateScoreIntoDB(recipientScore);
+                    _repositoryForDB.UpdateScoreIntoDB(recipientScore);
 
                     _logger.Info($"Money transferred from account id = {senderScore.Id} to account id = {recipientScore.Id}.");
 
