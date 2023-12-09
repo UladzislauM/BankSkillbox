@@ -1,9 +1,9 @@
-﻿using NLog;
+﻿using MarshalsExceptions;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using MarshalsExceptions;
 
 namespace Bank.Buisness
 {
@@ -13,8 +13,10 @@ namespace Bank.Buisness
     /// </summary>
     public class Service : MyNotification
     {
+        public string DBName { get; set; }
+        public string DBSource { get; set; }
         private readonly NLog.Logger _logger;
-        private readonly Repository _repository;
+        private readonly RepositoryForDB _repository;
 
         public event Action<object> SavedJsonObject;
         public event Action<List<Score>> ImportantScores;
@@ -40,7 +42,7 @@ namespace Bank.Buisness
         public Service()
         {
             _logger = LogManager.GetCurrentClassLogger();
-            _repository = new Repository();
+            _repository = new RepositoryForDB(DBSource ?? @"(localdb)\MSSQLLocalDB", DBName ?? "bankdb");
 
             ClientId = 0;
             ScoreId = 0;
@@ -394,7 +396,7 @@ namespace Bank.Buisness
             }
         }
 
-        public bool SendMoney(long scoreRecipientId, Decimal sum) //The transaction is out of scope
+        public bool SendMoney(long scoreRecipientId, Decimal sum)
         {
             try
             {
@@ -408,11 +410,13 @@ namespace Bank.Buisness
 
                     int senderCollectionIndex = Scores.IndexOf(Scores.First(item => item.Id == ScoreId));
                     Scores[senderCollectionIndex] = senderScore;
+                    _repository.UpdateScoreIntoDB(senderScore);
 
                     recipientScore.Balance += sum;
 
                     int recipientCollectionIndex = Scores.IndexOf(Scores.First(item => item.Id == scoreRecipientId));
                     Scores[recipientCollectionIndex] = recipientScore;
+                    _repository.UpdateScoreIntoDB(recipientScore);
 
                     _logger.Info($"Money transferred from account id = {senderScore.Id} to account id = {recipientScore.Id}.");
 
