@@ -93,8 +93,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConnectionDBMSQL.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Repository.cs" />
+    <Compile Include="RepositoryForDB.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

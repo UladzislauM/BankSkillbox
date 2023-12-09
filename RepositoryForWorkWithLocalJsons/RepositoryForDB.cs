@@ -1,17 +1,25 @@
-﻿using Newtonsoft.Json;
+﻿using MarshalsExceptions;
+using Newtonsoft.Json;
+using RepositoryForWorkWithLocalJsons;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.IO;
 using System.Text;
-using MarshalsExceptions;
 
 namespace Bank
 {
-    public class Repository
+    /// <summary>
+    /// Repository for DB using.
+    /// </summary>
+    public class RepositoryForDB
     {
-        private const string DBSource = @"(localdb)\MSSQLLocalDB";
-        private const string DBName = "bankdb";
+        private ConnectionDBMSQL _connection;
+
+        public RepositoryForDB(string dBSource, string dBName)
+        {
+            _connection = new ConnectionDBMSQL(dBSource, dBName);
+        }
 
         /// <summary>
         /// Saving the client to the DB.
@@ -22,18 +30,10 @@ namespace Bank
         {
             try
             {
-                SqlConnectionStringBuilder sqlConnectionBuilder = new SqlConnectionStringBuilder()
-                {
-                    DataSource = DBSource,
-                    InitialCatalog = DBName,
-                    IntegratedSecurity = true,
-                    Pooling = true
-                };
+                _connection.Connect();
 
-                using (SqlConnection connection = new SqlConnection(sqlConnectionBuilder.ConnectionString))
+                using (SqlConnection connection = _connection.GetConnection())
                 {
-                    connection.Open();
-
                     string sql = "INSERT INTO [dbo].[clients] ([id], [first_name], [last_name], [history], [prestige], [status]) " +
                         "VALUES (@Id, @FirstName, @LastName, @History, @Prestige, @Status)";
 
@@ -41,7 +41,7 @@ namespace Bank
                     {
                         ClientPrepareToSaveToDB(client, command).ExecuteNonQuery();
                     }
-                    connection.Close();
+                    _connection.Dispose();
                 }
                 return client;
             }
@@ -61,17 +61,10 @@ namespace Bank
         {
             try
             {
-                SqlConnectionStringBuilder sqlConnectionBuilder = new SqlConnectionStringBuilder()
-                {
-                    DataSource = DBSource,
-                    InitialCatalog = DBName,
-                    IntegratedSecurity = true,
-                    Pooling = true
-                };
+                _connection.Connect();
 
-                using (SqlConnection connection = new SqlConnection(sqlConnectionBuilder.ConnectionString))
+                using (SqlConnection connection = _connection.GetConnection())
                 {
-                    connection.Open();
 
                     string sql = "UPDATE [dbo].[clients] " +
                                  "SET [first_name] = @FirstName, " +
@@ -85,7 +78,7 @@ namespace Bank
                     {
                         ClientPrepareToSaveToDB(client, command).ExecuteNonQuery();
                     }
-                    connection.Close();
+                    _connection.Dispose();
                 }
                 return client;
             }
@@ -116,17 +109,10 @@ namespace Bank
         {
             try
             {
-                SqlConnectionStringBuilder sqlConnectionBuilder = new SqlConnectionStringBuilder()
-                {
-                    DataSource = DBSource,
-                    InitialCatalog = DBName,
-                    IntegratedSecurity = true,
-                    Pooling = true
-                };
+                _connection.Connect();
 
-                using (SqlConnection connection = new SqlConnection(sqlConnectionBuilder.ConnectionString))
+                using (SqlConnection connection = _connection.GetConnection())
                 {
-                    connection.Open();
                     string sql = "INSERT INTO [dbo].[scores] " +
                             "([id], [balance], [percent], [date_score], [is_capitalization], [is_money], [deadline], [date_last_dividends], [client_id], [score_type], [is_active]) " +
                             "VALUES (@Id, @Balance, @Percent, @DateScore, @IsCapitalization, @IsMoney, @Deadline, @DateLastDividends, @ClientId, @ScoreType, @IsActive)";
@@ -135,7 +121,7 @@ namespace Bank
                     {
                         ScorePrepareToSaveToDB(score, command).ExecuteNonQuery();
                     }
-                    connection.Close();
+                    _connection.Dispose();
                 }
                 return score;
             }
@@ -155,17 +141,10 @@ namespace Bank
         {
             try
             {
-                SqlConnectionStringBuilder sqlConnectionBuilder = new SqlConnectionStringBuilder()
-                {
-                    DataSource = DBSource,
-                    InitialCatalog = DBName,
-                    IntegratedSecurity = true,
-                    Pooling = true
-                };
+                _connection.Connect();
 
-                using (SqlConnection connection = new SqlConnection(sqlConnectionBuilder.ConnectionString))
+                using (SqlConnection connection = _connection.GetConnection())
                 {
-                    connection.Open();
 
                     string sql = "UPDATE [dbo].[scores] " +
                                  "SET [balance] = @Balance, " +
@@ -184,7 +163,7 @@ namespace Bank
                     {
                         ScorePrepareToSaveToDB(score, command).ExecuteNonQuery();
                     }
-                    connection.Close();
+                    _connection.Dispose();
                 }
                 return score;
             }
@@ -221,17 +200,10 @@ namespace Bank
         {
             try
             {
-                SqlConnectionStringBuilder sqlConnectionBuilder = new SqlConnectionStringBuilder()
-                {
-                    DataSource = DBSource,
-                    InitialCatalog = DBName,
-                    IntegratedSecurity = true,
-                    Pooling = true
-                };
+                _connection.Connect();
 
-                using (SqlConnection connection = new SqlConnection(sqlConnectionBuilder.ConnectionString))
+                using (SqlConnection connection = _connection.GetConnection())
                 {
-                    connection.Open();
                     SqlCommand command;
 
                     StringBuilder sql = new StringBuilder(
@@ -260,7 +232,7 @@ namespace Bank
                     }
                     sql.Clear();
 
-                    connection.Close();
+                    _connection.Dispose();
                 }
             }
             catch
@@ -279,18 +251,12 @@ namespace Bank
         {
             try
             {
-                SqlConnectionStringBuilder sqlConnectionBuilder = new SqlConnectionStringBuilder()
-                {
-                    DataSource = DBSource,
-                    InitialCatalog = DBName,
-                    IntegratedSecurity = true,
-                    Pooling = true
-                };
+                _connection.Connect();
 
                 List<T> objects = new List<T>();
-                using (SqlConnection connection = new SqlConnection(sqlConnectionBuilder.ConnectionString))
+
+                using (SqlConnection connection = _connection.GetConnection())
                 {
-                    connection.Open();
                     if (typeof(T) == typeof(Client))
                     {
                         var sql = @"SELECT id, first_name, last_name, history, prestige, status
@@ -323,7 +289,7 @@ namespace Bank
                         }
                     }
 
-                    connection.Close();
+                    _connection.Dispose();
                 }
                 return objects;
             }
@@ -360,20 +326,12 @@ namespace Bank
         {
             try
             {
-                SqlConnectionStringBuilder sqlConnectionBuilder = new SqlConnectionStringBuilder()
-                {
-                    DataSource = DBSource,
-                    InitialCatalog = DBName,
-                    IntegratedSecurity = true,
-                    Pooling = true
-                };
+                _connection.Connect();
 
                 object resualt = null;
 
-                using (SqlConnection connection = new SqlConnection(sqlConnectionBuilder.ConnectionString))
+                using (SqlConnection connection = _connection.GetConnection())
                 {
-                    connection.Open();
-
                     if (typeof(T) == typeof(Client))
                     {
                         var sql = @"SELECT id, first_name, last_name, history, prestige, status
@@ -409,7 +367,7 @@ namespace Bank
                             resualt = score;
                         }
                     }
-                    connection.Close();
+                    _connection.Dispose();
                 }
                 return resualt as T;
             }
