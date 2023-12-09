@@ -113,15 +113,15 @@
                     <DataGridTextColumn Binding = "{Binding Path = ScoreType, UpdateSourceTrigger=PropertyChanged}"
                                     Header="Тип сч."
                                     Width="50"
-                                    />
+                                    IsReadOnly="True"/>
                     <DataGridTextColumn Binding = "{Binding Path = Balance, UpdateSourceTrigger=PropertyChanged}"
                                     Header="Баланс"
                                     Width="50"
-                                    />
+                                    IsReadOnly="True"/>
                     <DataGridTextColumn Binding = "{Binding Path = Deadline, UpdateSourceTrigger=PropertyChanged}"
                                     Header="Срок дейст."
                                     Width="80"
-                                    />
+                                    IsReadOnly="True"/>
                 </DataGrid.Columns>
             </DataGrid>
 
