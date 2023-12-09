@@ -5,66 +5,68 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="AddKlient"         
-        Height="162.431" 
+        Height="200" 
         MaxHeight="200"
-        Width="318.895"
-        MaxWidth="320">
+        Width="350"
+        MaxWidth="350">
     <Grid Margin="0,0,2,2">
-
-        <Button IsDefault="True"
+        <StackPanel Orientation="Vertical" Margin="181,10,10,116">
+            <Button IsDefault="True"
                 Click="Button_Click"
-                Margin="187,50,10,50" 
-                Content="OK"/>
-        <Button Content="Отмена" 
+                Content="OK"
+                Height="22"/>
+            <Button Content="Отмена" 
                 IsCancel="True"
-                Margin="187,10,10,90"/>
-        <TextBlock HorizontalAlignment="Left"
-                   Margin="10,10,0,0"
+                Height="22"
+                Margin="0, 10, 0, 0"/>
+        </StackPanel>
+        <StackPanel Orientation="Vertical" Margin="10,6,159,4">
+
+            <TextBlock HorizontalAlignment="Left"
+                   Margin="0,0,0,0"
                    TextWrapping="Wrap"
                    Text="Выберите тип клиента" 
                    VerticalAlignment="Top"
-                   Width="166"
-                   Height="23"/>
-        <ComboBox x:Name="boxPeople"
+                   Height="18"/>
+            <ComboBox x:Name="boxPeople"
             HorizontalAlignment="Left" 
-                  Margin="10,33,0,0" 
-                  VerticalAlignment="Top" 
-                  Width="166"
-                   >
-            <ComboBoxItem Content="Обычные клиенты" 
+                  Margin="0,3,0,0" 
+                  VerticalAlignment="Center" 
+                  Height="22"
+                  Width="148">
+                <ComboBoxItem Content="Обычные клиенты" 
                           Selected="ComboBoxItem_Selected_normPeople"/>
-            <ComboBoxItem Content="VIP Клиенты" 
+                <ComboBoxItem Content="VIP Клиенты" 
                           Selected="ComboBoxItem_Selected_VIPPeople"/>
-            <ComboBoxItem Content="Юр. Клиенты" 
+                <ComboBoxItem Content="Юр. Клиенты" 
                           Selected="ComboBoxItem_Selected_corpCkients"/>
-        </ComboBox>
-        <TextBlock HorizontalAlignment="Left"
-                 Margin="10,55,0,0"
+            </ComboBox>
+            <TextBlock HorizontalAlignment="Left"
+                 Margin="0,3,0,0"
                  TextWrapping="Wrap"
                  Text="Имя" 
-                 VerticalAlignment="Top"
-                 Width="120"
-                 Height="23"/>
-        <TextBox HorizontalAlignment="Left" 
-                 Margin="10,77,0,0" 
+                 VerticalAlignment="Center"
+                 Height="18"/>
+            <TextBox HorizontalAlignment="Left" 
+                 Margin="0,3,0,0" 
                  TextWrapping="Wrap" 
-                 Text="Иван" 
-                 VerticalAlignment="Top" 
-                 Width="120"
-                 x:Name="ClientFirstName"/>
-        <TextBlock HorizontalAlignment="Left"
-                 Margin="10,100,0,0"
+                 x:Name="ClientFirstName" 
+                 Height="22"
+                 Width="148"/>
+            <TextBlock HorizontalAlignment="Left"
+                 Margin="0,3,0,0"
                  TextWrapping="Wrap"
                  Text="Фамилия" 
-                 VerticalAlignment="Top"
-                 Width="120"
-                 Height="23"/>
-        <TextBox HorizontalAlignment="Left" 
-                 Margin="10,122,0,0" 
+                 VerticalAlignment="Center"
+                 Width="148"
+                 Height="18"/>
+            <TextBox HorizontalAlignment="Left" 
+                 Margin="0,3,0,0" 
                  TextWrapping="Wrap" 
-                 Text="Иванов" 
-                 VerticalAlignment="Top"
-                 Width="120"
+                 VerticalAlignment="Center"
+                 Height="22"
+                 Width="148"
                  x:Name="ClientLastName"/>
+        </StackPanel>
     </Grid>
 </Window>
