@@ -396,6 +396,13 @@ namespace Bank.Buisness
             }
         }
 
+        /// <summary>
+        /// Method for transfer money among scores
+        /// </summary>
+        /// <param name="scoreRecipientId"></param>
+        /// <param name="sum"></param>
+        /// <returns></returns>
+        /// <exception cref="TransactionException"></exception>
         public bool SendMoney(long scoreRecipientId, Decimal sum)
         {
             try
