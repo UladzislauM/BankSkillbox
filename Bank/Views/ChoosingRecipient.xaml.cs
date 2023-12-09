@@ -18,6 +18,11 @@ namespace Bank.Views
             InitializeComponent();
 
             _service = service;
+            CreateAnAnonymousClass();
+        }
+
+        private void CreateAnAnonymousClass()
+        {
             Clients_Box.ItemsSource = _service.Scores.Select(score => new ViewObject
             {
                 Id = score.Id,
