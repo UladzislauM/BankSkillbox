@@ -207,6 +207,7 @@ namespace Bank
                     if (client != null)
                     {
                         _service.ClientId = client.Id;
+                        _service.Scores = _service.LoadAllScoresFromDB();
                         WriteClientScoreToView<Client>(client.Id);
                     }
                 }

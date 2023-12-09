@@ -10,6 +10,9 @@ namespace Bank
 {
     public class Repository
     {
+        private const string DBSource = @"(localdb)\MSSQLLocalDB";
+        private const string DBName = "bankdb";
+
         /// <summary>
         /// Saving the client to the DB.
         /// </summary>
@@ -21,8 +24,8 @@ namespace Bank
             {
                 SqlConnectionStringBuilder sqlConnectionBuilder = new SqlConnectionStringBuilder()
                 {
-                    DataSource = @"(localdb)\MSSQLLocalDB",
-                    InitialCatalog = "bankdb",
+                    DataSource = DBSource,
+                    InitialCatalog = DBName,
                     IntegratedSecurity = true,
                     Pooling = true
                 };
@@ -60,8 +63,8 @@ namespace Bank
             {
                 SqlConnectionStringBuilder sqlConnectionBuilder = new SqlConnectionStringBuilder()
                 {
-                    DataSource = @"(localdb)\MSSQLLocalDB",
-                    InitialCatalog = "bankdb",
+                    DataSource = DBSource,
+                    InitialCatalog = DBName,
                     IntegratedSecurity = true,
                     Pooling = true
                 };
@@ -115,8 +118,8 @@ namespace Bank
             {
                 SqlConnectionStringBuilder sqlConnectionBuilder = new SqlConnectionStringBuilder()
                 {
-                    DataSource = @"(localdb)\MSSQLLocalDB",
-                    InitialCatalog = "bankdb",
+                    DataSource = DBSource,
+                    InitialCatalog = DBName,
                     IntegratedSecurity = true,
                     Pooling = true
                 };
@@ -154,8 +157,8 @@ namespace Bank
             {
                 SqlConnectionStringBuilder sqlConnectionBuilder = new SqlConnectionStringBuilder()
                 {
-                    DataSource = @"(localdb)\MSSQLLocalDB",
-                    InitialCatalog = "bankdb",
+                    DataSource = DBSource,
+                    InitialCatalog = DBName,
                     IntegratedSecurity = true,
                     Pooling = true
                 };
@@ -220,8 +223,8 @@ namespace Bank
             {
                 SqlConnectionStringBuilder sqlConnectionBuilder = new SqlConnectionStringBuilder()
                 {
-                    DataSource = @"(localdb)\MSSQLLocalDB",
-                    InitialCatalog = "bankdb",
+                    DataSource = DBSource,
+                    InitialCatalog = DBName,
                     IntegratedSecurity = true,
                     Pooling = true
                 };
@@ -272,14 +275,14 @@ namespace Bank
         /// <typeparam name="T">Might be the client or score</typeparam>
         /// <returns>Might be the list of clients or scores</returns>
         /// <exception cref="Exception"></exception>
-        public List<T> LoadEntityDataFromDB<T>() where T : class
+        public List<T> FindEntitiesDataFromDB<T>() where T : class
         {
             try
             {
                 SqlConnectionStringBuilder sqlConnectionBuilder = new SqlConnectionStringBuilder()
                 {
-                    DataSource = @"(localdb)\MSSQLLocalDB",
-                    InitialCatalog = "bankdb",
+                    DataSource = DBSource,
+                    InitialCatalog = DBName,
                     IntegratedSecurity = true,
                     Pooling = true
                 };
@@ -298,7 +301,7 @@ namespace Bank
 
                         while (readData.Read())
                         {
-                            Client client = ConvertClientFromDB(readData, false);
+                            Client client = ConvertClientFromDB(readData);
 
                             objects.Add(client as T);
                         }
@@ -326,11 +329,11 @@ namespace Bank
             }
             catch
             {
-                throw new DBException("Save to DB exception");
+                throw new DBException("Find in DB exception");
             }
         }
 
-        private static Score ConvertScoreFromDB(SqlDataReader readData)
+        private Score ConvertScoreFromDB(SqlDataReader readData)
         {
             Score score = new Score(
                 (Score.ScoreTypes)Enum.Parse(typeof(Score.ScoreTypes), readData["score_type"].ToString()));
@@ -342,27 +345,89 @@ namespace Bank
             score.IsMoney = Convert.ToBoolean(readData["is_money"]);
             score.Deadline = Convert.ToDateTime(readData["deadline"]);
             score.DateLastDividends = Convert.ToDateTime(readData["date_last_dividends"]);
-            score.Client.Id = Convert.ToInt32(readData["client_id"]);
+            score.Client = (Client)FindEntityByIdFromDB<Client>(Convert.ToInt32(readData["client_id"]));
             score.IsActive = Convert.ToBoolean(readData["is_active"]);
-            score.Client = ConvertClientFromDB(readData, true);
             return score;
         }
 
-        private static Client ConvertClientFromDB(SqlDataReader readData, bool isScore)
+        /// <summary>
+        /// Load entity by id from the DB
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        /// <exception cref="DBException"></exception>
+        public T FindEntityByIdFromDB<T>(long id) where T : class
         {
-            string prefix = "";
-            if (isScore)
+            try
             {
-                prefix = "score.";
-            }
+                SqlConnectionStringBuilder sqlConnectionBuilder = new SqlConnectionStringBuilder()
+                {
+                    DataSource = DBSource,
+                    InitialCatalog = DBName,
+                    IntegratedSecurity = true,
+                    Pooling = true
+                };
 
+                object resualt = null;
+
+                using (SqlConnection connection = new SqlConnection(sqlConnectionBuilder.ConnectionString))
+                {
+                    connection.Open();
+
+                    if (typeof(T) == typeof(Client))
+                    {
+                        var sql = @"SELECT id, first_name, last_name, history, prestige, status
+                                    FROM [dbo].[clients]
+                                    WHERE id = @Id";
+
+                        SqlCommand command = new SqlCommand(sql, connection);
+                        command.Parameters.AddWithValue("@Id", id);
+
+                        SqlDataReader readData = command.ExecuteReader();
+
+                        if (readData.Read())
+                        {
+                            Client client = ConvertClientFromDB(readData);
+                            resualt = client;
+                        }
+                    }
+                    else if (typeof(T) == typeof(Score))
+                    {
+                        var sql = "SELECT id, balance, \"percent\", date_score, is_capitalization," +
+                            " is_money, deadline, date_last_dividends, client_id, is_active, score_type " +
+                                   "FROM [dbo].[scores]" +
+                                   "WHERE id = @id";
+
+                        SqlCommand command = new SqlCommand(sql, connection);
+                        command.Parameters.AddWithValue("@Id", id);
+
+                        SqlDataReader readData = command.ExecuteReader();
+
+                        while (readData.Read())
+                        {
+                            Score score = ConvertScoreFromDB(readData);
+                            resualt = score;
+                        }
+                    }
+                    connection.Close();
+                }
+                return resualt as T;
+            }
+            catch
+            {
+                throw new DBException("Find in DB exception");
+            }
+        }
+
+        private Client ConvertClientFromDB(SqlDataReader readData)
+        {
             Client client = new Client(
-                (Client.Statuses)Enum.Parse(typeof(Client.Statuses), readData[prefix + "status"].ToString()));
-            client.Id = Convert.ToInt32(readData[prefix + "id"]);
-            client.FirstName = readData[prefix + "first_name"].ToString();
-            client.LastName = readData[prefix + "last_name"].ToString();
-            client.History = readData[prefix + "history"].ToString();
-            client.Prestige = Convert.ToInt32(readData[prefix + "prestige"]);
+                (Client.Statuses)Enum.Parse(typeof(Client.Statuses), readData["status"].ToString()));
+            client.Id = Convert.ToInt32(readData["id"]);
+            client.FirstName = readData["first_name"].ToString();
+            client.LastName = readData["last_name"].ToString();
+            client.History = readData["history"].ToString();
+            client.Prestige = Convert.ToInt32(readData["prestige"]);
             return client;
         }
 

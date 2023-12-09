@@ -38,5 +38,33 @@
             <ComboBoxItem Content="Юр. Клиенты" 
                           Selected="ComboBoxItem_Selected_corpCkients"/>
         </ComboBox>
+        <TextBlock HorizontalAlignment="Left"
+                 Margin="10,55,0,0"
+                 TextWrapping="Wrap"
+                 Text="Имя" 
+                 VerticalAlignment="Top"
+                 Width="120"
+                 Height="23"/>
+        <TextBox HorizontalAlignment="Left" 
+                 Margin="10,77,0,0" 
+                 TextWrapping="Wrap" 
+                 Text="Иван" 
+                 VerticalAlignment="Top" 
+                 Width="120"
+                 x:Name="ClientFirstName"/>
+        <TextBlock HorizontalAlignment="Left"
+                 Margin="10,100,0,0"
+                 TextWrapping="Wrap"
+                 Text="Фамилия" 
+                 VerticalAlignment="Top"
+                 Width="120"
+                 Height="23"/>
+        <TextBox HorizontalAlignment="Left" 
+                 Margin="10,122,0,0" 
+                 TextWrapping="Wrap" 
+                 Text="Иванов" 
+                 VerticalAlignment="Top"
+                 Width="120"
+                 x:Name="ClientLastName"/>
     </Grid>
 </Window>

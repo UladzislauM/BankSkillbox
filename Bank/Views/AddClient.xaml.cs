@@ -27,7 +27,7 @@ namespace Bank
         {
             try
             {
-                _service.CreateNewClient(_clientStatus);
+                _service.CreateNewClient(_clientStatus, ClientFirstName.Text, ClientLastName.Text);
             }
             catch (ClientException)
             {

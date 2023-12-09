@@ -128,7 +128,7 @@ namespace Bank.Buisness
         /// <param name="status"></param>
         /// <exception cref="DBException"></exception>
         /// <exception cref="ClientException"></exception>
-        public void CreateNewClient(Client.Statuses status)
+        public void CreateNewClient(Client.Statuses status, string firstName, string lastName)
         {
             try
             {
@@ -139,6 +139,8 @@ namespace Bank.Buisness
 
                 Client client = new Client(status);
                 client.Id = ClientId++;
+                client.FirstName = firstName;
+                client.LastName = lastName;
 
                 Clients.Add(client);
 
@@ -291,7 +293,7 @@ namespace Bank.Buisness
         {
             try
             {
-                ObservableCollection<Client> clients = new ObservableCollection<Client>(_repository.LoadEntityDataFromDB<Client>());
+                ObservableCollection<Client> clients = new ObservableCollection<Client>(_repository.FindEntitiesDataFromDB<Client>());
 
                 if (clients.Count != 0)
                 {
@@ -317,7 +319,7 @@ namespace Bank.Buisness
         {
             try
             {
-                ObservableCollection<Score> scores = new ObservableCollection<Score>(_repository.LoadEntityDataFromDB<Score>());
+                ObservableCollection<Score> scores = new ObservableCollection<Score>(_repository.FindEntitiesDataFromDB<Score>());
 
                 if (scores.Count != 0)
                 {
