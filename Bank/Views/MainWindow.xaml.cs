@@ -207,7 +207,6 @@ namespace Bank
                     if (client != null)
                     {
                         _service.ClientId = client.Id;
-                        _service.Scores = _service.LoadAllScoresFromDB();
                         WriteClientScoreToView<Client>(client.Id);
                     }
                 }
@@ -225,7 +224,7 @@ namespace Bank
             {
                 Client editedClient = (Client)e.Row.Item;
 
-                _service.UpdateClientIntoDB(editedClient);
+                _service.Clients[(int)editedClient.Id] = editedClient;
             }
             catch
             {
@@ -377,6 +376,39 @@ namespace Bank
         }
 
         /// <summary>
+        /// Click for load all data from the DB.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Button_Click_LoadAllFromDB(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                _service.LoadAllClientsFromDB();
+                _service.LoadAllScoresFromDB();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);//TODO
+            }
+        }
+        
+        private void Button_Click_Clear(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                _service.Clients.Clear();
+                _service.Scores.Clear();
+                _service.ClientId = 0;
+                _service.ScoreId = 0;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);//TODO
+            }
+        }
+
+        /// <summary>
         /// Check deadline all scores
         /// </summary>
         /// <param name="sender"></param>
@@ -431,7 +463,7 @@ namespace Bank
 
             if (status == null)
             {
-                dgClientsList.ItemsSource = _service.LoadAllClientsFromDB();
+                dgClientsList.ItemsSource = _service.Clients;
             }
             else
             {

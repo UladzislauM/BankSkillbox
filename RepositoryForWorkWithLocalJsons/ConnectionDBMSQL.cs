@@ -26,16 +26,23 @@ namespace RepositoryForWorkWithLocalJsons
         /// <param name="dBSource"></param>
         public void Connect()
         {
-            SqlConnectionStringBuilder sqlConnectionBuilder = new SqlConnectionStringBuilder()
+            try
             {
-                DataSource = DBSource,
-                InitialCatalog = DBName,
-                IntegratedSecurity = true,
-                Pooling = true
-            };
+                SqlConnectionStringBuilder sqlConnectionBuilder = new SqlConnectionStringBuilder()
+                {
+                    DataSource = DBSource,
+                    InitialCatalog = DBName,
+                    IntegratedSecurity = true,
+                    Pooling = true
+                };
 
-            _connection = new SqlConnection(sqlConnectionBuilder.ConnectionString);
-            _connection.Open();
+                _connection = new SqlConnection(sqlConnectionBuilder.ConnectionString);
+                _connection.Open();
+            }
+            catch
+            {
+                _connection = null;
+            }
         }
 
         /// <summary>

@@ -16,6 +16,12 @@
                           Click="Button_Click_OpenJson"/>
                 <MenuItem Header="Save json"
                           Click="Button_Click_SaveJson"/>
+                <MenuItem Header="Save to DB"
+                          Click="Button_Click_SaveAllToDB"/>
+                <MenuItem Header="Load from DB"
+                          Click="Button_Click_LoadAllFromDB"/>
+                <MenuItem Header="Clear data"
+                          Click="Button_Click_Clear"/>
                 <MenuItem Header="Exit" Click="MenuItem_Exit_Click"/>
             </MenuItem>
             <MenuItem Header="Help">
@@ -31,15 +37,17 @@
                 <RowDefinition Height = "*"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width = "*"/>
+                <ColumnDefinition Width = "11*"/>
+                <ColumnDefinition Width="11*"/>
+                <ColumnDefinition Width="978*"/>
             </Grid.ColumnDefinitions>
 
             <TreeView x:Name="twBank" 
                 HorizontalAlignment="Left" 
                 Height="370"
-                Margin="317,43,0,0" 
+                Margin="295,43,0,0" 
                 VerticalAlignment="Top" 
-                Width="247">
+                Width="247" Grid.Column="2">
 
                 <TextBox>Банк</TextBox>
 
@@ -82,10 +90,10 @@
 
             <DataGrid x:Name="dgClientsList"
             AutoGenerateColumns="False" 
-            Margin="0,41,681.6,8" 
+            Margin="0,41,682,8" 
             CanUserSortColumns="True" 
             GotMouseCapture="dgClientsList_GotMouseCapture_Clients"
-            CellEditEnding="dgClientsList_CellEditEnding">
+            CellEditEnding="dgClientsList_CellEditEnding" Grid.ColumnSpan="3">
                 <DataGrid.Columns>
                     <DataGridTextColumn Binding="{Binding Path = Id, UpdateSourceTrigger=PropertyChanged}"
                                     Header="№ кл." 
@@ -102,9 +110,9 @@
 
             <DataGrid x:Name="dgScoresList"
                   AutoGenerateColumns="False" 
-                  Margin="569,43,163.6,6" 
+                  Margin="547,43,164,6" 
                   CanUserSortColumns="True"
-                  GotMouseCapture="dgScoresList_GotMouseCapture_Scores">
+                  GotMouseCapture="dgScoresList_GotMouseCapture_Scores" Grid.Column="2">
                 <DataGrid.Columns>
                     <DataGridTextColumn Binding="{Binding Path = Id, UpdateSourceTrigger=PropertyChanged}"
                                     Header="№ сч." 
@@ -130,47 +138,66 @@
                 Margin="10,10,0,0"
                 VerticalAlignment="Top"
                 Width="120"
-                Click="Button_Click_AddClient"/>
+                Click="Button_Click_AddClient" Grid.ColumnSpan="3"/>
             <Button x:Name="Send_Money_Button"
                 Content="Перевести деньги в:"
                 HorizontalAlignment="Left" 
-                Margin="260,10,0,0"
+                Margin="238,10,0,0"
                 VerticalAlignment="Top"
                 Width="120"
                 Click="Button_Click_SendMoney"
-                Visibility="Hidden"/>
+                Visibility="Hidden" 
+                Grid.Column="2"/>
             <Button Content="Добавить счет"
                 HorizontalAlignment="Left" 
-                Margin="135,10,0,0"
+                Margin="113,10,0,0"
                 VerticalAlignment="Top"
                 Width="120"
-                Click="Button_Click_AddScore"
-                />
+                Click="Button_Click_AddScore" 
+                Grid.Column="2"/>
             <Button Content="Проверка Срока выплаты"
                 x:Name="buttonTest"
                 HorizontalAlignment="Left" 
-                Margin="385,10,0,0"
+                Margin="363,10,0,0"
                 VerticalAlignment="Top"
                 Width="155"
-                Click="Button_Click_TestDep"/>
+                Click="Button_Click_TestDep" 
+                Grid.Column="2"/>
             <Button Content="Сохранить в json"
                 HorizontalAlignment="Left" 
-                Margin="881,10,0,0"
+                Margin="859,10,0,0"
                 VerticalAlignment="Top"
                 Width="103"
-                Click="Button_Click_SaveJson"/>
+                Click="Button_Click_SaveJson" 
+                Grid.Column="2"/>
             <Button Content="Загрузить json"
                 HorizontalAlignment="Left" 
-                Margin="881,34,0,0"
+                Margin="859,34,0,0"
                 VerticalAlignment="Top"
                 Width="103"
-                Click="Button_Click_OpenJson"/>
-            <Button Content="Сохранить в DB"
+                Click="Button_Click_OpenJson" 
+                Grid.Column="2"/>
+            <Button Content="Загрузить из БД"
                 HorizontalAlignment="Left" 
-                Margin="881,73,0,0"
+                Margin="859,74,0,0"
                 VerticalAlignment="Top"
                 Width="103"
-                Click="Button_Click_SaveAllToDB"/>
+                Click="Button_Click_LoadAllFromDB" 
+                Grid.Column="2"/>
+            <Button Content="Сохранить в БД"
+                HorizontalAlignment="Left" 
+                Margin="859,99,0,0"
+                VerticalAlignment="Top"
+                Width="103"
+                Click="Button_Click_SaveAllToDB" 
+                Grid.Column="2"/>
+            <Button Content="Очистить"
+                HorizontalAlignment="Left" 
+                Margin="859,138,0,0"
+                VerticalAlignment="Top"
+                Width="103"
+                Click="Button_Click_Clear" 
+                Grid.Column="2"/>
         </Grid>
     </DockPanel>
 </Window>

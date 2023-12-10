@@ -11,7 +11,7 @@ namespace Bank.Buisness
     /// <summary>
     /// Business logic for UladzislauM banking application.
     /// </summary>
-    public class Service : MyNotification
+    public class Service : MyNotification //TODO How work with Json & DB?
     {
         public string DBName { get; set; }
         public string DBSource { get; set; }
@@ -43,7 +43,7 @@ namespace Bank.Buisness
         public Service()
         {
             _logger = LogManager.GetCurrentClassLogger();
-            _repositoryForDB = new RepositoryForDB(DBSource ?? @"(localdb)\MSSQLLocalDB", DBName ?? "bankdb");
+            _repositoryForDB = new RepositoryForDB(DBSource ?? @"(localdb)\MSSQLLocalDB", DBName ?? "bankdb"); //TODO add new view for connection
             _repositoryForJson = new RepositoryForJson();
 
             ClientId = 0;
@@ -68,11 +68,6 @@ namespace Bank.Buisness
         {
             try
             {
-                if (ScoreId == 0)
-                {
-                    LoadAllScoresFromDB();
-                }
-
                 Score score = new Score(scoreType);
 
                 score.Id = ScoreId++;
@@ -93,8 +88,6 @@ namespace Bank.Buisness
                 Scores.Add(score);
 
                 _logger.Info($"A {score.ScoreType} account has been created for the user {score.Client.FirstName} {score.Client.LastName}");
-
-                _repositoryForDB.SaveScoreToDB(score);
             }
             catch (DBException)
             {
@@ -136,11 +129,6 @@ namespace Bank.Buisness
         {
             try
             {
-                if (ClientId == 0)
-                {
-                    LoadAllClientsFromDB();
-                }
-
                 Client client = new Client(status);
                 client.Id = ClientId++;
                 client.FirstName = firstName;
@@ -149,8 +137,6 @@ namespace Bank.Buisness
                 Clients.Add(client);
 
                 _logger.Info($"Client {client.FirstName} {client.LastName} has been created.");
-
-                _repositoryForDB.SaveClientToDB(client);
             }
             catch (DBException)
             {
@@ -190,12 +176,13 @@ namespace Bank.Buisness
         {
             try
             {
-                _repositoryForDB.SaveAllDataToDB(Clients.ToList(), Scores.ToList()); //TODO checked for same data
+                _repositoryForDB.UpdateAllEntitiesIntoDB(Clients.ToList(), Scores.ToList());
 
-                _logger.Info($"General DB data saved");
+                _logger.Info($"General data saved in the DB");
             }
             catch
             {
+                _logger.Error("Something went wrong while saveing data to the DB");
                 throw new DBException("Something went wrong while saveing data to the DB");
             }
         }
