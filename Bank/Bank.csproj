@@ -147,6 +147,9 @@
     <Compile Include="Views\ChoosingRecipient.xaml.cs">
       <DependentUpon>ChoosingRecipient.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ConnectToDB.xaml.cs">
+      <DependentUpon>ConnectToDB.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\CreateScore.xaml.cs">
       <DependentUpon>CreateScore.xaml</DependentUpon>
     </Compile>
@@ -155,6 +158,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ChoosingRecipient.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ConnectToDB.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

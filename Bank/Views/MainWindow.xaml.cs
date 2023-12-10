@@ -15,18 +15,11 @@ namespace Bank
 {
     public partial class MainWindow : Window
     {
-        /// <summary>
-        /// Дата проверки. Для выдачи Суммы
-        /// </summary>
-        //public DateTime dateTest;//TODO
-
         private readonly Service _service;
 
         public MainWindow()
         {
             InitializeComponent();
-            //dateTest = DateTime.Now;
-
             _service = new Service();
 
             _service.SavedJsonObject += _service_SavedJsonObject;
@@ -359,6 +352,24 @@ namespace Bank
         }
 
         /// <summary>
+        /// Click for create\change cknnection to the DB in another form.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Button_Click_Connect(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                ConnectToDB connectToDB = new ConnectToDB(_service);
+                connectToDB.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);//TODO
+            }
+        }
+
+        /// <summary>
         /// Click for saving all data to the DB.
         /// </summary>
         /// <param name="sender"></param>
@@ -367,6 +378,13 @@ namespace Bank
         {
             try
             {
+                if (_service.DBSource == "" && _service.DBName == "" ||
+                    _service.DBSource == null && _service.DBName == null)
+                {
+                    ConnectToDB connectToDB = new ConnectToDB(_service);
+                    connectToDB.ShowDialog();
+                }
+
                 _service.SaveAllDataToDB();
             }
             catch (Exception ex)
@@ -384,6 +402,13 @@ namespace Bank
         {
             try
             {
+                if (_service.DBSource == "" && _service.DBName == "" ||
+                    _service.DBSource == null && _service.DBName == null)
+                {
+                    ConnectToDB connectToDB = new ConnectToDB(_service);
+                    connectToDB.ShowDialog();
+                }
+
                 _service.LoadAllClientsFromDB();
                 _service.LoadAllScoresFromDB();
             }
@@ -392,7 +417,7 @@ namespace Bank
                 MessageBox.Show(ex.Message);//TODO
             }
         }
-        
+
         private void Button_Click_Clear(object sender, RoutedEventArgs e)
         {
             try

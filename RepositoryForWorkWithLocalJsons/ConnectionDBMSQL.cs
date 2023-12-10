@@ -19,6 +19,12 @@ namespace RepositoryForWorkWithLocalJsons
             DBName = dBName;
         }
 
+        public void UpdateConnection(string dBSource, string dBName)
+        {
+            DBSource = dBSource;
+            DBName = dBName;
+        }
+
         /// <summary>
         /// Connect to db ADO.net.
         /// </summary>

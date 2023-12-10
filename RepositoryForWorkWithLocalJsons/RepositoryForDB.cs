@@ -19,6 +19,11 @@ namespace Bank
             _connection = new ConnectionDBMSQL(dBSource, dBName);
         }
 
+        public void UpdateConnection(string dBSource, string dBName)
+        {
+            _connection.UpdateConnection(dBSource, dBName);
+        }
+
         /// <summary>
         /// Saving the client to the DB.
         /// </summary>
