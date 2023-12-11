@@ -16,12 +16,17 @@
                           Click="Button_Click_OpenJson"/>
                 <MenuItem Header="Save json"
                           Click="Button_Click_SaveJson"/>
+                <Separator/>
+                <MenuItem Header="Connect to DB"
+                          Click="Button_Click_Connect"/>
                 <MenuItem Header="Save to DB"
                           Click="Button_Click_SaveAllToDB"/>
                 <MenuItem Header="Load from DB"
                           Click="Button_Click_LoadAllFromDB"/>
+                <Separator/>
                 <MenuItem Header="Clear data"
                           Click="Button_Click_Clear"/>
+                <Separator/>
                 <MenuItem Header="Exit" Click="MenuItem_Exit_Click"/>
             </MenuItem>
             <MenuItem Header="Help">
@@ -49,7 +54,7 @@
                 VerticalAlignment="Top" 
                 Width="247" Grid.Column="2">
 
-                <TextBox>Банк</TextBox>
+                <TextBox IsReadOnly="True">Банк</TextBox>
 
                 <TreeViewItem Header="Все клиенты"
                           Selected="TreeViewItem_Selected_AllClients"/>
@@ -105,6 +110,9 @@
                     <DataGridTextColumn Binding="{Binding Path = LastName, UpdateSourceTrigger=PropertyChanged}"
                                     Header="Фамилия" 
                                     Width="90"/>
+                    <DataGridTextColumn Binding="{Binding Path = Status, UpdateSourceTrigger=PropertyChanged}"
+                                    Header="Статус" 
+                                    Width="90"/>
                 </DataGrid.Columns>
             </DataGrid>
 
@@ -122,7 +130,7 @@
                                     Header="Тип сч."
                                     Width="50"
                                     IsReadOnly="True"/>
-                    <DataGridTextColumn Binding = "{Binding Path = Balance, UpdateSourceTrigger=PropertyChanged}"
+                    <DataGridTextColumn Binding = "{Binding Path = Balance, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:F2}}"
                                     Header="Баланс"
                                     Width="50"
                                     IsReadOnly="True"/>
