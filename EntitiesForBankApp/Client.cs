@@ -23,21 +23,31 @@
         private string _history;
 
         /// <summary>
-        /// Client's status
+        /// Client's prestige
         /// </summary>
         private int _prestige;
 
-        public enum Statuses
-        {
-            General, VIP, Corporative
-        }
+        /// <summary>
+        /// Client's status
+        /// </summary>
+        private Statuses _status;
 
-        public Client (Statuses status)
+        public Client(Statuses status)
         {
             Status = status;
         }
 
-        public Statuses Status { get; set; }
+        public Statuses Status
+        {
+            get => _status;
+            set
+            {
+                if (_status == value)
+                    return;
+                this._status = value;
+                OnPropertyChanged(nameof(Status));
+            }
+        }
 
         public long Id
         {
@@ -97,6 +107,11 @@
                 this._prestige = value;
                 OnPropertyChanged(nameof(Prestige));
             }
+        }
+
+        public enum Statuses
+        {
+            General, VIP, Corporative
         }
 
     }
