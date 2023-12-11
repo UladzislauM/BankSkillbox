@@ -343,6 +343,8 @@ namespace Bank
 
                 _service.OpenJsonData();
 
+                WritePartCollectionToView(null, false, null, true);
+
                 Task.Run(() => { _service.CheckDeadline(); });
             }
             catch (JsonException)
@@ -411,6 +413,8 @@ namespace Bank
 
                 _service.LoadAllClientsFromDB();
                 _service.LoadAllScoresFromDB();
+
+                WritePartCollectionToView(null, false, null, true);
             }
             catch (Exception ex)
             {
@@ -481,7 +485,7 @@ namespace Bank
         /// <param name="e"></param>
         private void MenuItem_Exit_Click(object sender, RoutedEventArgs e) => Close();
 
-        private void WritePartCollectionToView(Client.Statuses? status = null, bool isScore = false, Score.ScoreTypes? typeScore = null)
+        private void WritePartCollectionToView(Client.Statuses? status = null, bool isScore = false, Score.ScoreTypes? typeScore = null, bool isAllScores = false)
         {
             dgScoresList.ItemsSource = null;
             dgClientsList.ItemsSource = null;
@@ -509,6 +513,11 @@ namespace Bank
                     List<Score> scoresGeneralPeoples = _service.Scores.Where(parameter => parameter.Client.Status == status).ToList();
                     dgScoresList.ItemsSource = new ObservableCollection<Score>(scoresGeneralPeoples);
                 }
+            }
+            if (isAllScores)
+            {
+                ObservableCollection<Score> allScores = _service.Scores;
+                dgScoresList.ItemsSource = allScores;
             }
         }
 
