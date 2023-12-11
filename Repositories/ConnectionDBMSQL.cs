@@ -1,7 +1,6 @@
-﻿using System;
-using System.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 
-namespace RepositoryForWorkWithLocalJsons
+namespace Bank
 {
     /// <summary>
     /// Class for connection to DB with the ADO.net method.

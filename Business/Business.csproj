@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NLog" Version="5.2.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EntitiesForBankApp\EntitiesForBankApp.csproj" />
+    <ProjectReference Include="..\Marshal'sExceptions\MarshalsExceptions.csproj" />
+    <ProjectReference Include="..\MyNotifications\MyNotifications.csproj" />
+    <ProjectReference Include="..\Repositories\Repositories.csproj" />
+  </ItemGroup>
+
+</Project>
