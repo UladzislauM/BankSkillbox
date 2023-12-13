@@ -2,53 +2,22 @@
 {
     public class Client : MyNotification
     {
-        /// <summary>
-        /// Client's ID
-        /// </summary>
         private long _id;
-
-        /// <summary>
-        /// Client's name
-        /// </summary>
         private string _firstName;
-
-        /// <summary>
-        /// Client's last name
-        /// </summary>
         private string _lastName;
-
-        /// <summary>
-        /// Credit history
-        /// </summary>
         private string _history;
-
-        /// <summary>
-        /// Client's prestige
-        /// </summary>
         private int _prestige;
-
-        /// <summary>
-        /// Client's status
-        /// </summary>
         private Statuses _status;
+        private List<Score> _scores;
 
         public Client(Statuses status)
         {
             Status = status;
         }
 
-        public Statuses Status
-        {
-            get => _status;
-            set
-            {
-                if (_status == value)
-                    return;
-                this._status = value;
-                OnPropertyChanged(nameof(Status));
-            }
-        }
-
+        /// <summary>
+        /// Client's ID
+        /// </summary>
         public long Id
         {
             get => _id;
@@ -61,6 +30,9 @@
             }
         }
 
+        /// <summary>
+        /// Client's name
+        /// </summary>
         public string FirstName
         {
             get => _firstName;
@@ -73,6 +45,9 @@
             }
         }
 
+        /// <summary>
+        /// Client's last name
+        /// </summary>
         public string LastName
         {
             get => _lastName;
@@ -85,6 +60,9 @@
             }
         }
 
+        /// <summary>
+        /// Credit history
+        /// </summary>
         public string History
         {
             get => _history;
@@ -97,6 +75,9 @@
             }
         }
 
+        /// <summary>
+        /// Client's prestige
+        /// </summary>
         public int Prestige
         {
             get => _prestige;
@@ -106,6 +87,36 @@
                     return;
                 this._prestige = value;
                 OnPropertyChanged(nameof(Prestige));
+            }
+        }
+
+        /// <summary>
+        /// Client's status
+        /// </summary>
+        public Statuses Status
+        {
+            get => _status;
+            set
+            {
+                if (_status == value)
+                    return;
+                this._status = value;
+                OnPropertyChanged(nameof(Status));
+            }
+        }
+
+        /// <summary>
+        /// Client's scores
+        /// </summary>
+        public List<Score> Scores
+        {
+            get => _scores;
+            set
+            {
+                if (_scores == value)
+                    return;
+                this._scores = value;
+                OnPropertyChanged(nameof(Scores));
             }
         }
 

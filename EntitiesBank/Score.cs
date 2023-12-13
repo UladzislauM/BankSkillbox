@@ -1,63 +1,22 @@
-﻿using System;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Bank
 {
     public class Score : MyNotification
-    {
-        /// <summary>
-        /// Score's ID
-        /// </summary>
+    { 
         private long _id;
-
-        /// <summary>
-        /// Score's balance
-        /// </summary>
         private Decimal _balance;
-
-        /// <summary>
-        /// Interest on the account
-        /// </summary>
         private Decimal _percent;
-
-        /// <summary>
-        /// Score's date
-        /// </summary>
         private DateTime _dateScore;
-
-        /// <summary>
-        /// With сapitalization
-        /// </summary>
         private bool _isСapitalization;
-
-        /// <summary>
-        /// Can you give out money
-        /// </summary>
         private bool _isMoney;
-
-        /// <summary>
-        /// End date of the contract
-        /// </summary>
         private DateTime _deadline;
-
-        /// <summary>
-        /// Date of the last dividend payment
-        /// </summary>
         private DateTime _dateLastDividends;
-
-        /// <summary>
-        /// Owner
-        /// </summary>
         private Client _client;
-
-        /// <summary>
-        /// Type score
-        /// </summary>
-        private ScoreTypes _scoreType;
-
-        /// <summary>
-        /// Score state
-        /// </summary>
+        private long _clientId;
         private bool _isActive;
+        private ScoreTypes _scoreType;
 
         public Score(ScoreTypes scoreType)
         {
@@ -66,18 +25,9 @@ namespace Bank
             _dateLastDividends = DateTime.Now;
         }
 
-        public ScoreTypes ScoreType
-        {
-            get => _scoreType;
-            set
-            {
-                if (_scoreType == value)
-                    return;
-                this._scoreType = value;
-                OnPropertyChanged(nameof(ScoreType));
-            }
-        }
-
+        /// <summary>
+        /// Score's ID
+        /// </summary>
         public long Id
         {
             get => _id;
@@ -90,6 +40,9 @@ namespace Bank
             }
         }
 
+        /// <summary>
+        /// Score's balance
+        /// </summary>
         public Decimal Balance
         {
             get => _balance;
@@ -102,6 +55,10 @@ namespace Bank
             }
         }
 
+
+        /// <summary>
+        /// Score's percent
+        /// </summary>
         public Decimal Percent
         {
             get => _percent;
@@ -114,17 +71,23 @@ namespace Bank
             }
         }
 
+        /// <summary>
+        /// Score's date
+        /// </summary>
         public DateTime DateScore
         {
             get => _dateScore;
             set
             {
                 if (_dateScore == value)
-                    return; 
+                    return;
                 OnPropertyChanged(nameof(DateScore));
             }
         }
 
+        /// <summary>
+        /// Score's сapitalization
+        /// </summary>
         public bool IsСapitalization
         {
             get => _isСapitalization;
@@ -136,6 +99,9 @@ namespace Bank
             }
         }
 
+        /// <summary>
+        /// Can you give out money
+        /// </summary>
         public bool IsMoney
         {
             get => _isMoney;
@@ -147,6 +113,9 @@ namespace Bank
             }
         }
 
+        /// <summary>
+        /// End date of the score contract
+        /// </summary>
         public DateTime Deadline
         {
             get => _deadline;
@@ -159,6 +128,9 @@ namespace Bank
             }
         }
 
+        /// <summary>
+        /// Date of the last dividend score payment
+        /// </summary>
         public DateTime DateLastDividends
         {
             get => _dateLastDividends;
@@ -171,6 +143,9 @@ namespace Bank
             }
         }
 
+        /// <summary>
+        /// Score's owner
+        /// </summary>
         public Client Client
         {
             get => _client;
@@ -182,7 +157,25 @@ namespace Bank
                 OnPropertyChanged(nameof(Client));
             }
         }
+        
+        /// <summary>
+        /// Score's owner id.
+        /// </summary>
+        public long ClientId
+        {
+            get => _clientId;
+            set
+            {
+                if (_clientId == value)
+                    return;
+                this._clientId = value;
+                OnPropertyChanged(nameof(Client));
+            }
+        }
 
+        /// <summary>
+        /// Score's work status
+        /// </summary>
         public bool IsActive
         {
             get => _isActive;
@@ -192,6 +185,21 @@ namespace Bank
                     return;
                 this._isActive = value;
                 OnPropertyChanged(nameof(IsActive));
+            }
+        }
+
+        /// <summary>
+        /// Score type
+        /// </summary>
+        public ScoreTypes ScoreType
+        {
+            get => _scoreType;
+            set
+            {
+                if (_scoreType == value)
+                    return;
+                this._scoreType = value;
+                OnPropertyChanged(nameof(ScoreType));
             }
         }
 
