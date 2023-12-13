@@ -1,16 +1,17 @@
 ﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 
 namespace Bank
 {
     /// <summary>
-    /// Class for connection to DB with the ADO.net method.
+    /// Class for connection to DB with the EntityFramework method.
     /// </summary>
-    internal class ConnectionDBMSQL : IDisposable
+    internal class ConnectionDBMSQL
     {
         private string DBSource;
         private string DBName;
 
-        private SqlConnection _connection;
+        private DbMyEntitiesContext _connectionContext;
 
         public ConnectionDBMSQL(string dBSource, string dBName)
         {
@@ -33,20 +34,20 @@ namespace Bank
         {
             try
             {
-                SqlConnectionStringBuilder sqlConnectionBuilder = new SqlConnectionStringBuilder()
+                var optionsBuilder = new DbContextOptionsBuilder<DbMyEntitiesContext>();
+                optionsBuilder.UseSqlServer(new SqlConnectionStringBuilder
                 {
                     DataSource = DBSource,
                     InitialCatalog = DBName,
                     IntegratedSecurity = true,
                     Pooling = true
-                };
+                }.ConnectionString);
 
-                _connection = new SqlConnection(sqlConnectionBuilder.ConnectionString);
-                _connection.Open();
+                _connectionContext = new DbMyEntitiesContext(optionsBuilder.Options);
             }
             catch
             {
-                _connection = null;
+                _connectionContext = null;
             }
         }
 
@@ -54,20 +55,10 @@ namespace Bank
         /// Get db ADO.net connection.
         /// </summary>
         /// <returns></returns>
-        public SqlConnection GetConnection()
+        public DbMyEntitiesContext GetConnection()
         {
-            return _connection;
+            return _connectionContext;
         }
 
-        /// <summary>
-        /// Dispose db ADO.net connection.
-        /// </summary>
-        public void Dispose()
-        {
-            if (_connection != null)
-            {
-                _connection.Close();
-            }
-        }
     }
 }

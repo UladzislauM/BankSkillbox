@@ -21,7 +21,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Business\Business.csproj" />
-    <ProjectReference Include="..\EntitiesForBankApp\EntitiesForBankApp.csproj" />
     <ProjectReference Include="..\Marshal'sExceptions\MarshalsExceptions.csproj" />
   </ItemGroup>
 

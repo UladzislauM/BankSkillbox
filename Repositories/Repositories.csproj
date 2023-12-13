@@ -9,11 +9,12 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EntitiesForBankApp\EntitiesForBankApp.csproj" />
+    <ProjectReference Include="..\EntitiesBank\EntitiesBank.csproj" />
     <ProjectReference Include="..\Marshal'sExceptions\MarshalsExceptions.csproj" />
   </ItemGroup>
 

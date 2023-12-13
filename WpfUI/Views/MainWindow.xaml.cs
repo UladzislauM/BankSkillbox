@@ -500,14 +500,16 @@ namespace Bank
             {
                 if (typeScore.HasValue)
                 {
-                    List<Score> scoresGeneralPeoples = _service.Scores.Where(parameter => parameter.Client.Status == status
-                    && parameter.ScoreType == typeScore).ToList();
-                    dgScoresList.ItemsSource = new ObservableCollection<Score>(scoresGeneralPeoples);
+                    List<Score> scoresGeneralPeoples = _service.Scores.Where(parameter
+                        => _service.Clients[(int)parameter.ClientId].Status == status
+                        && parameter.ScoreType == typeScore).ToList();
+                        dgScoresList.ItemsSource = new ObservableCollection<Score>(scoresGeneralPeoples);
                 }
                 else
                 {
-                    List<Score> scoresGeneralPeoples = _service.Scores.Where(parameter => parameter.Client.Status == status).ToList();
-                    dgScoresList.ItemsSource = new ObservableCollection<Score>(scoresGeneralPeoples);
+                    List<Score> scoresGeneralPeoples = _service.Scores.Where(parameter 
+                        => _service.Clients[(int)parameter.ClientId].Status == status).ToList();
+                        dgScoresList.ItemsSource = new ObservableCollection<Score>(scoresGeneralPeoples);
                 }
             }
             if (isAllScores)
@@ -521,13 +523,13 @@ namespace Bank
         {
             if (typeof(T) == typeof(Client))
             {
-                List<Score> scores = _service.Scores.Where(parameter => parameter.Client.Id == id).ToList();
+                List<Score> scores = _service.Scores.Where(parameter => parameter.ClientId == id).ToList();
                 dgScoresList.ItemsSource = new ObservableCollection<Score>(scores);
             }
             else
             {
                 List<Score> scores = _service.Scores.Where(parameter => parameter.Id == id).ToList();
-                List<Client> clients = _service.Clients.Where(paremetr => paremetr.Id == scores[0].Client.Id).ToList();
+                List<Client> clients = _service.Clients.Where(paremetr => paremetr.Id == scores[0].ClientId).ToList();
                 dgClientsList.ItemsSource = new ObservableCollection<Client>(clients);
             }
         }

@@ -5,8 +5,6 @@ VisualStudioVersion = 17.7.34024.191
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyNotifications", "MyNotifications\MyNotifications.csproj", "{53527B23-8E21-4DA5-80C6-062B76489AF1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntitiesForBankApp", "EntitiesForBankApp\EntitiesForBankApp.csproj", "{251D61C6-E48D-41CC-8A60-34F71DE82AE1}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarshalsExceptions", "Marshal'sExceptions\MarshalsExceptions.csproj", "{58C0363C-2EE3-4706-979A-73389276DFAE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B5A1224B-4AFD-4282-8662-8B9833ED5050}"
@@ -20,6 +18,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfUI", "WpfUI\WpfUI.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Business", "Business\Business.csproj", "{14F2E2B0-B9DA-404A-A47B-2B3D209012C2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntitiesBank", "EntitiesBank\EntitiesBank.csproj", "{30FFA66A-FFB8-4ED3-BBD3-4B86CA7272E3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,10 +30,6 @@ Global
 		{53527B23-8E21-4DA5-80C6-062B76489AF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{53527B23-8E21-4DA5-80C6-062B76489AF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{53527B23-8E21-4DA5-80C6-062B76489AF1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{251D61C6-E48D-41CC-8A60-34F71DE82AE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{251D61C6-E48D-41CC-8A60-34F71DE82AE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{251D61C6-E48D-41CC-8A60-34F71DE82AE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{251D61C6-E48D-41CC-8A60-34F71DE82AE1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{58C0363C-2EE3-4706-979A-73389276DFAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{58C0363C-2EE3-4706-979A-73389276DFAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{58C0363C-2EE3-4706-979A-73389276DFAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -50,6 +46,10 @@ Global
 		{14F2E2B0-B9DA-404A-A47B-2B3D209012C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{14F2E2B0-B9DA-404A-A47B-2B3D209012C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{14F2E2B0-B9DA-404A-A47B-2B3D209012C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30FFA66A-FFB8-4ED3-BBD3-4B86CA7272E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30FFA66A-FFB8-4ED3-BBD3-4B86CA7272E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30FFA66A-FFB8-4ED3-BBD3-4B86CA7272E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30FFA66A-FFB8-4ED3-BBD3-4B86CA7272E3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
