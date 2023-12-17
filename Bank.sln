@@ -9,16 +9,17 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarshalsExceptions", "Marsh
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B5A1224B-4AFD-4282-8662-8B9833ED5050}"
 	ProjectSection(SolutionItems) = preProject
-		Scema.sql = Scema.sql
+		SchemeMSQL.sql = SchemeMSQL.sql
+		SchemePSQL.sql = SchemePSQL.sql
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Repositories", "Repositories\Repositories.csproj", "{5F932CE6-4EF0-4BD3-8A58-46DBE534E42B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Repositories", "Repositories\Repositories.csproj", "{5F932CE6-4EF0-4BD3-8A58-46DBE534E42B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfUI", "WpfUI\WpfUI.csproj", "{D2FBB709-2191-4662-80FC-76BF16A51F85}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfUI", "WpfUI\WpfUI.csproj", "{D2FBB709-2191-4662-80FC-76BF16A51F85}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Business", "Business\Business.csproj", "{14F2E2B0-B9DA-404A-A47B-2B3D209012C2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Business", "Business\Business.csproj", "{14F2E2B0-B9DA-404A-A47B-2B3D209012C2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntitiesBank", "EntitiesBank\EntitiesBank.csproj", "{30FFA66A-FFB8-4ED3-BBD3-4B86CA7272E3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EntitiesBank", "EntitiesBank\EntitiesBank.csproj", "{30FFA66A-FFB8-4ED3-BBD3-4B86CA7272E3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
