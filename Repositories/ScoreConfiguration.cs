@@ -20,7 +20,7 @@ namespace Repositories
             builder.Property(s => s.DateScore)
                 .HasColumnName("date_score");
 
-            builder.Property(s => s.IsСapitalization)
+            builder.Property(s => s.IsCapitalization)
                 .HasColumnName("is_capitalization")
                 .IsRequired();
 

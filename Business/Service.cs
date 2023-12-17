@@ -83,7 +83,7 @@ namespace Bank.Buisness
                 score.Id = ScoreId++;
                 score.Deadline = score.DateScore.AddMonths(period);
                 score.Balance = sum;
-                score.IsСapitalization = isCapitalization;
+                score.IsCapitalization = isCapitalization;
                 score.Client = Clients[(int)ClientId];
                 score.IsActive = true;
                 if (scoreType == Score.ScoreTypes.Deposit)
@@ -370,7 +370,7 @@ namespace Bank.Buisness
                     }
                     //Checking deposit's capitalisation
                     else if (currentScore.ScoreType == Score.ScoreTypes.Deposit &&
-                        currentScore.IsСapitalization == true &&
+                        currentScore.IsCapitalization == true &&
                         currentScore.DateLastDividends.AddMonths(1) <= checkingData)
                     {
                         currentScore.DateLastDividends = checkingData;
