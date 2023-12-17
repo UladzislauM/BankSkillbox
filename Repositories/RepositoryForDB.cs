@@ -174,7 +174,7 @@ namespace Bank
                             existingScore.Balance = score.Balance;
                             existingScore.Percent = score.Percent;
                             existingScore.DateScore = score.DateScore;
-                            existingScore.IsСapitalization = score.IsСapitalization;
+                            existingScore.IsCapitalization = score.IsCapitalization;
                             existingScore.IsMoney = score.IsMoney;
                             existingScore.Deadline = score.Deadline;
                             existingScore.DateLastDividends = score.DateLastDividends;

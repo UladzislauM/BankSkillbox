@@ -9,7 +9,7 @@ namespace Bank
         private Decimal _balance;
         private Decimal _percent;
         private DateTime _dateScore;
-        private bool _isСapitalization;
+        private bool _isCapitalization;
         private bool _isMoney;
         private DateTime _deadline;
         private DateTime _dateLastDividends;
@@ -88,14 +88,14 @@ namespace Bank
         /// <summary>
         /// Score's сapitalization
         /// </summary>
-        public bool IsСapitalization
+        public bool IsCapitalization
         {
-            get => _isСapitalization;
+            get => _isCapitalization;
             set
             {
-                if (_isСapitalization == value)
+                if (_isCapitalization == value)
                     return;
-                OnPropertyChanged(nameof(IsСapitalization));
+                OnPropertyChanged(nameof(IsCapitalization));
             }
         }
 
