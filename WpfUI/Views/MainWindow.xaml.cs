@@ -350,24 +350,6 @@ namespace Bank
         }
 
         /// <summary>
-        /// Click for create\change cknnection to the DB in another form.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Button_Click_Connect(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                ConnectToDB connectToDB = new ConnectToDB(_service);
-                connectToDB.ShowDialog();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);//TODO
-            }
-        }
-
-        /// <summary>
         /// Click for saving all data to the DB.
         /// </summary>
         /// <param name="sender"></param>
@@ -376,13 +358,6 @@ namespace Bank
         {
             try
             {
-                if (_service.DBSource == "" && _service.DBName == "" ||
-                    _service.DBSource == null && _service.DBName == null)
-                {
-                    ConnectToDB connectToDB = new ConnectToDB(_service);
-                    connectToDB.ShowDialog();
-                }
-
                 _service.SaveAllDataToDB();
             }
             catch (Exception ex)
@@ -400,13 +375,6 @@ namespace Bank
         {
             try
             {
-                if (_service.DBSource == "" && _service.DBName == "" ||
-                    _service.DBSource == null && _service.DBName == null)
-                {
-                    ConnectToDB connectToDB = new ConnectToDB(_service);
-                    connectToDB.ShowDialog();
-                }
-
                 _service.LoadAllClientsFromDB();
                 _service.LoadAllScoresFromDB();
 

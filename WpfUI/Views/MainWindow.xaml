@@ -17,8 +17,6 @@
                 <MenuItem Header="Save json"
                           Click="Button_Click_SaveJson"/>
                 <Separator/>
-                <MenuItem Header="Connect to DB"
-                          Click="Button_Click_Connect"/>
                 <MenuItem Header="Save to DB"
                           Click="Button_Click_SaveAllToDB"/>
                 <MenuItem Header="Load from DB"
@@ -206,13 +204,6 @@
                 VerticalAlignment="Top"
                 Width="117"
                 Click="Button_Click_Clear" 
-                Grid.Column="2"/>
-            <Button Content="Подключится к БД"
-                HorizontalAlignment="Left" 
-                Margin="845,73,0,0"
-                VerticalAlignment="Top"
-                Width="117"
-                Click="Button_Click_Connect" 
                 Grid.Column="2"/>
         </Grid>
     </DockPanel>

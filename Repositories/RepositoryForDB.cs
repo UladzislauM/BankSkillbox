@@ -10,14 +10,9 @@ namespace Bank
     {
         private ConnectionDBMSQL _connection;
 
-        public RepositoryForDB(string dBSource, string dBName)
+        public RepositoryForDB()
         {
-            _connection = new ConnectionDBMSQL(dBSource, dBName);
-        }
-
-        public void UpdateConnection(string dBSource, string dBName)
-        {
-            _connection.UpdateConnection(dBSource, dBName);
+            _connection = new ConnectionDBMSQL();
         }
 
         /// <summary>

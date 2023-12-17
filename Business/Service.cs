@@ -40,7 +40,7 @@ namespace Bank.Buisness
         public Service()
         {
             _logger = LogManager.GetCurrentClassLogger();
-            _repositoryForDB = new RepositoryForDB(DBSource ?? "", DBName ?? "");
+            _repositoryForDB = new RepositoryForDB();
             _repositoryForJson = new RepositoryForJson();
 
             ClientId = 0;
@@ -50,19 +50,6 @@ namespace Bank.Buisness
             Clients = new ObservableCollection<Client>();
 
             JsonAddress = "";
-        }
-
-        /// <summary>
-        /// Method for update connection data.
-        /// </summary>
-        /// <param name="dBSource"></param>
-        /// <param name="dBName"></param>
-        public void UpdateConnection(string dBSource, string dBName)
-        {
-            DBSource = dBSource;
-            DBName = dBName;
-
-            _repositoryForDB.UpdateConnection(dBSource, dBName);
         }
 
         /// <summary>
