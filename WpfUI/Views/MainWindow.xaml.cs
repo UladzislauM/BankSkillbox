@@ -213,7 +213,7 @@ namespace Bank
             {
                 Client editedClient = (Client)e.Row.Item;
 
-                _service.Clients[(int)editedClient.Id] = editedClient;
+                _service.Clients[(int)editedClient.Id - 1] = editedClient;
             }
             catch
             {
@@ -469,14 +469,14 @@ namespace Bank
                 if (typeScore.HasValue)
                 {
                     List<Score> scoresGeneralPeoples = _service.Scores.Where(parameter
-                        => _service.Clients[(int)parameter.ClientId].Status == status
+                        => _service.Clients[(int)parameter.ClientId - 1].Status == status
                         && parameter.ScoreType == typeScore).ToList();
                         dgScoresList.ItemsSource = new ObservableCollection<Score>(scoresGeneralPeoples);
                 }
                 else
                 {
                     List<Score> scoresGeneralPeoples = _service.Scores.Where(parameter 
-                        => _service.Clients[(int)parameter.ClientId].Status == status).ToList();
+                        => _service.Clients[(int)parameter.ClientId - 1].Status == status).ToList();
                         dgScoresList.ItemsSource = new ObservableCollection<Score>(scoresGeneralPeoples);
                 }
             }
@@ -494,7 +494,7 @@ namespace Bank
                 List<Score> scores = _service.Scores.Where(parameter => parameter.ClientId == id).ToList();
                 dgScoresList.ItemsSource = new ObservableCollection<Score>(scores);
             }
-            else
+            else if (typeof(T) == typeof(Score))
             {
                 List<Score> scores = _service.Scores.Where(parameter => parameter.Id == id).ToList();
                 List<Client> clients = _service.Clients.Where(paremetr => paremetr.Id == scores[0].ClientId).ToList();

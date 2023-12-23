@@ -43,8 +43,8 @@ namespace Bank.Buisness
             _repositoryForDB = new RepositoryForDB();
             _repositoryForJson = new RepositoryForJson();
 
-            ClientId = 0;
-            ScoreId = 0;
+            ClientId = 1;
+            ScoreId = 1;
 
             Scores = new ObservableCollection<Score>();
             Clients = new ObservableCollection<Client>();
@@ -67,12 +67,25 @@ namespace Bank.Buisness
             {
                 Score score = new Score(scoreType);
 
-                score.Id = ScoreId++;
+                int currentScoreId = (int)Scores[Scores.Count - 1].Id;
+
+                score.Id = currentScoreId + 1;
                 score.Deadline = score.DateScore.AddMonths(period);
                 score.Balance = sum;
                 score.IsCapitalization = isCapitalization;
-                score.Client = Clients[(int)ClientId];
+                //score.Client = Clients[(int)ClientId - 1];
+                score.ClientId = (int)ClientId;
                 score.IsActive = true;
+
+                if (Clients[(int)ClientId - 1].Scores == null)
+                {
+                    Clients[(int)ClientId - 1].Scores = new List<Score>() { score };
+                }
+                else
+                {
+                    Clients[(int)ClientId - 1].Scores.Add(score);
+                }
+
                 if (scoreType == Score.ScoreTypes.Deposit)
                 {
                     score.IsMoney = false;
@@ -84,7 +97,7 @@ namespace Bank.Buisness
 
                 Scores.Add(score);
 
-                _logger.Info($"A {score.ScoreType} account has been created for the user {score.Client.FirstName} {score.Client.LastName}");
+                _logger.Info($"A {score.ScoreType} account has been created for the user with id = {score.ClientId}");
             }
             catch (DBException)
             {
@@ -107,7 +120,8 @@ namespace Bank.Buisness
         {
             try
             {
-                _repositoryForDB.UpdateScoreIntoDB(score);
+                _repositoryForDB.UpdateEntityIntoDB(score, "DBConnectionMS");
+                _repositoryForDB.UpdateEntityIntoDB(score, "DBConnectionPSQL");
             }
             catch (DBException)
             {
@@ -127,9 +141,13 @@ namespace Bank.Buisness
             try
             {
                 Client client = new Client(status);
+
+                int currentClientId = Clients.Count;
+
                 client.Id = ClientId++;
                 client.FirstName = firstName;
                 client.LastName = lastName;
+                client.History = "";
 
                 Clients.Add(client);
 
@@ -156,7 +174,8 @@ namespace Bank.Buisness
         {
             try
             {
-                _repositoryForDB.UpdateClientIntoDB(client);
+                _repositoryForDB.UpdateEntityIntoDB(client, "DBConnectionMS");
+                _repositoryForDB.UpdateEntityIntoDB(client, "DBConnectionPSQL");
             }
             catch (DBException)
             {
@@ -173,7 +192,11 @@ namespace Bank.Buisness
         {
             try
             {
-                _repositoryForDB.UpdateAllEntitiesIntoDB(Clients.ToList(), Scores.ToList());
+                _repositoryForDB.UpdateEntitiesIntoDB(Clients.ToList(), "DBConnectionMS");
+                //_repositoryForDB.UpdateEntitiesIntoDB(Clients.ToList(), "DBConnectionPSQL");
+
+                _repositoryForDB.UpdateEntitiesIntoDB(Scores.ToList(), "DBConnectionMS");
+                //_repositoryForDB.UpdateEntitiesIntoDB(Scores.ToList(), "DBConnectionPSQL");
 
                 _logger.Info($"General data saved in the DB");
             }
@@ -181,6 +204,58 @@ namespace Bank.Buisness
             {
                 _logger.Error("Something went wrong while saveing data to the DB");
                 throw new DBException("Something went wrong while saveing data to the DB");
+            }
+        }
+
+        /// <summary>
+        /// Loading all clients from the DB.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="DBException"></exception>
+        public ObservableCollection<Client> LoadAllClientsFromDB()
+        {
+            try
+            {
+                ObservableCollection<Client> clients = new ObservableCollection<Client>(_repositoryForDB.FindEntitiesFromDB<Client>("DBConnectionMS"));
+
+                if (clients.Count != 0)
+                {
+                    Clients = clients;
+                    ClientId = clients[clients.Count - 1].Id;
+                    ClientId++;
+                }
+
+                return clients;
+            }
+            catch
+            {
+                throw new DBException("Load Clients exception");
+            }
+        }
+
+        /// <summary>
+        /// Loading all scores from the DB.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="DBException"></exception>
+        public ObservableCollection<Score> LoadAllScoresFromDB()
+        {
+            try
+            {
+                ObservableCollection<Score> scores = new ObservableCollection<Score>(_repositoryForDB.FindEntitiesFromDB<Score>("DBConnectionMS"));
+
+                if (scores.Count != 0)
+                {
+                    Scores = scores;
+                    ScoreId = scores[scores.Count - 1].Id;
+                    ScoreId++;
+                }
+
+                return scores;
+            }
+            catch
+            {
+                throw new DBException("Load Scores exception");
             }
         }
 
@@ -273,58 +348,6 @@ namespace Bank.Buisness
         }
 
         /// <summary>
-        /// Loading all clients from the DB.
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="DBException"></exception>
-        public ObservableCollection<Client> LoadAllClientsFromDB()
-        {
-            try
-            {
-                ObservableCollection<Client> clients = new ObservableCollection<Client>(_repositoryForDB.FindEntitiesDataFromDB<Client>());
-
-                if (clients.Count != 0)
-                {
-                    Clients = clients;
-                    ClientId = clients[clients.Count - 1].Id;
-                    ClientId++;
-                }
-
-                return clients;
-            }
-            catch
-            {
-                throw new DBException("Load Clients exception");
-            }
-        }
-
-        /// <summary>
-        /// Loading all scores from the DB.
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="DBException"></exception>
-        public ObservableCollection<Score> LoadAllScoresFromDB()
-        {
-            try
-            {
-                ObservableCollection<Score> scores = new ObservableCollection<Score>(_repositoryForDB.FindEntitiesDataFromDB<Score>());
-
-                if (scores.Count != 0)
-                {
-                    Scores = scores;
-                    ScoreId = scores[scores.Count - 1].Id;
-                    ScoreId++;
-                }
-
-                return scores;
-            }
-            catch
-            {
-                throw new DBException("Load Scores exception");
-            }
-        }
-
-        /// <summary>
         /// Check deadline all scores
         /// </summary>
         public void CheckDeadline()
@@ -403,13 +426,11 @@ namespace Bank.Buisness
 
                     int senderCollectionIndex = Scores.IndexOf(Scores.First(item => item.Id == ScoreId));
                     Scores[senderCollectionIndex] = senderScore;
-                    _repositoryForDB.UpdateScoreIntoDB(senderScore);
 
                     recipientScore.Balance += sum;
 
                     int recipientCollectionIndex = Scores.IndexOf(Scores.First(item => item.Id == scoreRecipientId));
                     Scores[recipientCollectionIndex] = recipientScore;
-                    _repositoryForDB.UpdateScoreIntoDB(recipientScore);
 
                     _logger.Info($"Money transferred from account id = {senderScore.Id} to account id = {recipientScore.Id}.");
 

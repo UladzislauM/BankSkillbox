@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Repositories
+namespace Repositories.Configurations
 {
     internal class ScoreConfiguration : IEntityTypeConfiguration<Score>
     {
@@ -10,6 +10,9 @@ namespace Repositories
         {
             builder.ToTable("scores")
                 .HasKey(s => s.Id);
+
+            //builder.Property(s => s.Id)
+            //    .HasColumnName("Id");
 
             builder.Property(s => s.Balance)
                 .HasColumnName("balance");
@@ -48,7 +51,7 @@ namespace Repositories
                 .HasColumnName("client_id")
                 .IsRequired();
 
-            builder.HasOne(s => s.Client)
+            builder.HasOne<Client>()
                 .WithMany(c => c.Scores)
                 .HasForeignKey(s => s.ClientId)
                 .OnDelete(DeleteBehavior.Restrict)

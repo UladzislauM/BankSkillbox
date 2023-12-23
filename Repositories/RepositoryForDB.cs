@@ -1,5 +1,7 @@
 ﻿using MarshalsExceptions;
 using Microsoft.EntityFrameworkCore;
+using Repositories;
+using System.Data;
 
 namespace Bank
 {
@@ -8,60 +10,17 @@ namespace Bank
     /// </summary>
     public class RepositoryForDB
     {
-        private ConnectionDBMSQL _connection;
-
-        public RepositoryForDB()
-        {
-            _connection = new ConnectionDBMSQL();
-        }
-
         /// <summary>
-        /// Saving the client to the DB.
+        /// Saving the entity to the DB.
         /// </summary>
-        /// <param name="client"></param>
+        /// <param name="entity"></param>
         /// <exception cref="Exception"></exception>
-        public Client SaveClientToDB(Client client)
+        public E SaveEntityToDB<E>(E entity, string dbConnectionName) where E : class
         {
             try
             {
-                _connection.Connect();
-
-                if (_connection.GetConnection() != null)
-                {
-                    using (DbMyEntitiesContext connection = _connection.GetConnection())
-                    {
-                        connection.Clients.Add(client);
-                        connection.SaveChanges();
-                    }
-                }
-                return client;
-            }
-            catch
-            {
-                throw new DBException("Save to DB exception");
-            }
-        }
-
-        /// <summary>
-        /// Saving the score to the DB.
-        /// </summary>
-        /// <param name="score"></param>
-        /// <exception cref="Exception"></exception>
-        public Score SaveScoreToDB(Score score)
-        {
-            try
-            {
-                _connection.Connect();
-
-                if (_connection.GetConnection() != null)
-                {
-                    using (DbMyEntitiesContext connection = _connection.GetConnection())
-                    {
-                        connection.Scores.Add(score);
-                        connection.SaveChanges();
-                    }
-                }
-                return score;
+                E newEntity = PrepareAndExecuteQuery(entity, dbConnectionName, OperationType.Save)[0];
+                return newEntity;
             }
             catch
             {
@@ -72,31 +31,16 @@ namespace Bank
         /// <summary>
         /// The method for saving all entities data to the DB
         /// </summary>
-        /// <param name="clients"></param>
+        /// <param name="entities"></param>
         /// <param name="scores"></param>
         /// <exception cref="Exception"></exception>
-        public void SaveAllDataToDB(List<Client> clients, List<Score> scores)
+        public void SaveAllDataToDB<E>(List<E> entities, string dbConnectionName) where E : class
         {
             try
             {
-                _connection.Connect();
-
-                if (_connection.GetConnection() != null)
+                foreach (var entity in entities)
                 {
-                    using (DbMyEntitiesContext connection = _connection.GetConnection())
-                    {
-                        foreach (var client in clients)
-                        {
-                            connection.Clients.Add(client);
-                        }
-
-                        foreach (var score in scores)
-                        {
-                            connection.Scores.Add(score);
-                        }
-
-                        connection.SaveChanges();
-                    }
+                    PrepareAndExecuteQuery<E>(entity, dbConnectionName, OperationType.Save);
                 }
             }
             catch
@@ -106,84 +50,19 @@ namespace Bank
         }
 
         /// <summary>
-        /// Update client into the DB.
+        /// Update entity into the DB.
         /// </summary>
-        /// <param name="client"></param>
+        /// <typeparam name="E"></typeparam>
+        /// <param name="entity"></param>
+        /// <param name="dbConnectionName"></param>
         /// <returns></returns>
         /// <exception cref="DBException"></exception>
-        public Client UpdateClientIntoDB(Client client)
+        public E UpdateEntityIntoDB<E>(E entity, string dbConnectionName) where E : class
         {
             try
             {
-                _connection.Connect();
-
-                if (_connection.GetConnection() != null)
-                {
-                    using (DbMyEntitiesContext connection = _connection.GetConnection())
-                    {
-                        Client existingClient = connection.Clients.Find(client.Id);
-
-                        if (existingClient != null)
-                        {
-                            existingClient.FirstName = client.FirstName;
-                            existingClient.LastName = client.LastName;
-                            existingClient.History = client.History;
-                            existingClient.Prestige = client.Prestige;
-                            existingClient.Status = client.Status;
-
-                            connection.SaveChanges();
-                        }
-
-                        return client;
-                    }
-                }
-                return client;
-            }
-            catch
-            {
-                throw new DBException("Save to DB exception");
-            }
-        }
-
-        /// <summary>
-        /// Update score into the DB.
-        /// </summary>
-        /// <param name="score"></param>
-        /// <returns></returns>
-        /// <exception cref="DBException"></exception>
-        public Score UpdateScoreIntoDB(Score score)
-        {
-            try
-            {
-                _connection.Connect();
-
-                if (_connection.GetConnection() != null)
-                {
-                    using (DbMyEntitiesContext connection = _connection.GetConnection())
-                    {
-                        Score existingScore = connection.Scores.Include(s => s.Client)
-                            .FirstOrDefault(s => s.Id == score.Id);
-
-                        if (existingScore != null)
-                        {
-                            existingScore.Balance = score.Balance;
-                            existingScore.Percent = score.Percent;
-                            existingScore.DateScore = score.DateScore;
-                            existingScore.IsCapitalization = score.IsCapitalization;
-                            existingScore.IsMoney = score.IsMoney;
-                            existingScore.Deadline = score.Deadline;
-                            existingScore.DateLastDividends = score.DateLastDividends;
-                            existingScore.Client.Id = score.Client.Id;
-                            existingScore.ScoreType = score.ScoreType;
-                            existingScore.IsActive = score.IsActive;
-
-                            connection.SaveChanges();
-                        }
-
-                        return score;
-                    }
-                }
-                return score;
+                E newEntity = PrepareAndExecuteQuery(entity, dbConnectionName, OperationType.Update)[0];
+                return newEntity;
             }
             catch
             {
@@ -197,46 +76,13 @@ namespace Bank
         /// <param name="clients"></param>
         /// <param name="scores"></param>
         /// <exception cref="DBException"></exception>
-        public void UpdateAllEntitiesIntoDB(List<Client> clients, List<Score> scores)
+        public void UpdateEntitiesIntoDB<E>(List<E> entities, string dbConnectionName) where E : class
         {
             try
             {
-                _connection.Connect();
-
-                if (_connection.GetConnection() != null)
+                foreach (var entity in entities)
                 {
-                    using (DbMyEntitiesContext connection = _connection.GetConnection())
-                    {
-                        foreach (var client in clients)
-                        {
-                            var existingClient = connection.Clients.FirstOrDefault(c => c.Id == client.Id);
-
-                            if (existingClient != null)
-                            {
-                                connection.Entry(existingClient).CurrentValues.SetValues(client);
-                            }
-                            else
-                            {
-                                connection.Clients.Add(client);
-                            }
-                        }
-
-                        foreach (var score in scores)
-                        {
-                            var existingScore = connection.Scores.FirstOrDefault(s => s.Id == score.Id);
-
-                            if (existingScore != null)
-                            {
-                                connection.Entry(existingScore).CurrentValues.SetValues(score);
-                            }
-                            else
-                            {
-                                connection.Scores.Add(score);
-                            }
-                        }
-
-                        connection.SaveChanges();
-                    }
+                    PrepareAndExecuteQuery(entity, dbConnectionName, OperationType.Update);
                 }
             }
             catch
@@ -246,34 +92,17 @@ namespace Bank
         }
 
         /// <summary>
-        /// Load entity data from db (clients or scores)
+        /// Load entity by id from the DB
         /// </summary>
-        /// <typeparam name="T">Might be the client or score</typeparam>
-        /// <returns>Might be the list of clients or scores</returns>
-        /// <exception cref="Exception"></exception>
-        public List<T> FindEntitiesDataFromDB<T>() where T : class
+        /// <param name="id"></param>
+        /// <returns></returns>
+        /// <exception cref="DBException"></exception>
+        public E FindEntityByIdFromDB<E>(long id, string dbConnectionName) where E : class
         {
             try
             {
-                List<T> objects = new List<T>();
-
-                _connection.Connect();
-
-                if (_connection.GetConnection() != null)
-                {
-                    using (DbMyEntitiesContext connection = _connection.GetConnection())
-                    {
-                        if (typeof(T) == typeof(Client))
-                        {
-                            return connection.Clients.OfType<T>().ToList();
-                        }
-                        else if (typeof(T) == typeof(Score))
-                        {
-                            return connection.Scores.Include(c => c.Client).OfType<T>().ToList();
-                        }
-                    }
-                }
-                return objects;
+                E newEntity = PrepareAndExecuteQuery<E>(null, dbConnectionName, OperationType.FindById, id)[0];
+                return newEntity;
             }
             catch
             {
@@ -282,43 +111,181 @@ namespace Bank
         }
 
         /// <summary>
-        /// Load entity by id from the DB
+        /// Find entities with concret type from db.
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
+        /// <typeparam name="E">Type of entity</typeparam>
+        /// <param name="dbConnectionName">Name connection</param>
+        /// <returns>List entities</returns>
         /// <exception cref="DBException"></exception>
-        public T FindEntityByIdFromDB<T>(long id) where T : class
+        public List<E> FindEntitiesFromDB<E>(string dbConnectionName) where E : class
         {
             try
             {
-                _connection.Connect();
-                object resualt = null;
-
-                if (_connection.GetConnection() != null)
-                {
-
-                    using (DbMyEntitiesContext connection = _connection.GetConnection())
-                    {
-                        if (typeof(T) == typeof(Client))
-                        {
-                            resualt = connection.Clients
-                                .Where(c => c.Id == id)
-                                .FirstOrDefault();
-                        }
-                        else if (typeof(T) == typeof(Score))
-                        {
-                            resualt = connection.Scores
-                                 .Where(s => s.Id == id)
-                                 .FirstOrDefault();
-                        }
-                    }
-                }
-                return resualt as T;
+                List<E> entities = PrepareAndExecuteQuery<E>(null, dbConnectionName, OperationType.FindAll);
+                return entities;
             }
-            catch
+            catch (Exception ex)
             {
-                throw new DBException("Find in DB exception");
+                throw new DBException("Find in DB exception", ex);
             }
+        }
+
+        private List<E> PrepareAndExecuteQuery<E>(E entity, string dbConnectionName, OperationType typeQuery, long id = 0) where E : class
+        {
+            ConnectionToDb connection = new ConnectionToDb();
+
+            connection.Connect(dbConnectionName);
+
+            List<E> objects = new List<E>();
+
+            if (connection.GetConnection() != null)
+            {
+                using (DbMyEntitiesContext dbContext = connection.GetConnection())
+                {
+                    switch (typeQuery)
+                    {
+                        case OperationType.Save:
+                            dbContext.Set<E>().Add(entity);
+                            dbContext.SaveChanges();
+                            objects.Add(entity);
+                            break;
+
+                        case OperationType.Update:
+                            UpdateEntity(dbContext, entity);
+                            break;
+
+                        case OperationType.FindAll:
+                            objects.AddRange(FindAllEntities<E>(dbContext));
+                            break;
+                        case OperationType.FindById:
+                            FindEntityById<E>(id, dbContext);
+                            break;
+                    }
+                    dbContext.SaveChanges();
+                }
+            }
+
+            return objects;
+        }
+
+        private E FindEntityById<E>(long id, DbMyEntitiesContext dbContext) where E : class
+        {
+            object result = null;
+
+            if (typeof(E) == typeof(Client))
+            {
+                result = dbContext.Clients
+                    .Where(c => c.Id == id)
+                    .FirstOrDefault();
+            }
+            else if (typeof(E) == typeof(Score))
+            {
+                result = dbContext.Scores
+                     .Where(s => s.Id == id)
+                     .FirstOrDefault();
+            }
+
+            return result as E;
+        }
+
+        private E UpdateEntity<E>(DbMyEntitiesContext dbContext, E entity) where E : class
+        {
+            if (typeof(E) == typeof(Client))
+            {
+                return UpdateClient(dbContext, entity as Client) as E;
+            }
+            else if (typeof(E) == typeof(Score))
+            {
+                return UpdateScore(dbContext, entity as Score) as E;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        private Client UpdateClient(DbMyEntitiesContext dbContext, Client client)
+        {
+            Client existingClient = dbContext.Clients.Find(client.Id);
+            Client newClient = null;
+
+            if (existingClient != null)
+            {
+                existingClient.FirstName = client.FirstName;
+                existingClient.LastName = client.LastName;
+                existingClient.History = client.History;
+                existingClient.Prestige = client.Prestige;
+                existingClient.Status = client.Status;
+
+                dbContext.Clients.Update(existingClient);
+
+                newClient = client;
+            }
+            else
+            {
+                dbContext.Clients.Add(client);
+
+                //dbContext.SaveChanges();
+
+                newClient = client;
+            }
+            return newClient;
+        }
+
+        private Score UpdateScore(DbMyEntitiesContext dbContext, Score score)
+        {
+            Score existingScore = dbContext.Scores.FirstOrDefault(s => s.Id == score.Id);
+            Score newScore = null;
+
+            if (existingScore != null)
+            {
+                existingScore.Balance = score.Balance;
+                existingScore.Percent = score.Percent;
+                existingScore.DateScore = score.DateScore;
+                existingScore.IsCapitalization = score.IsCapitalization;
+                existingScore.IsMoney = score.IsMoney;
+                existingScore.Deadline = score.Deadline;
+                existingScore.DateLastDividends = score.DateLastDividends;
+                //existingScore.Client.Id = score.Id;
+                existingScore.ScoreType = score.ScoreType;
+                existingScore.IsActive = score.IsActive;
+
+                dbContext.Scores.Update(existingScore);
+
+                newScore = score;
+            }
+            else
+            {
+                dbContext.Scores.Add(score);
+
+                newScore = score;
+
+                //dbContext.SaveChanges();
+            }
+            return newScore;
+        }
+
+        private List<E> FindAllEntities<E>(DbMyEntitiesContext dbContext) where E : class
+        {
+            List<E> objects = new List<E>();
+            if (typeof(E) == typeof(Client))
+            {
+                objects = dbContext.Clients.Include(c => c.Scores).OfType<E>().ToList();
+            }
+            else if (typeof(E) == typeof(Score))
+            {
+                objects = dbContext.Scores.OfType<E>().ToList();
+            }
+
+            return objects;
+        }
+
+        private enum OperationType
+        {
+            Save,
+            Update,
+            FindAll,
+            FindById
         }
 
     }

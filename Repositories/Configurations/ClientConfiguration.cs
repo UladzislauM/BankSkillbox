@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Repositories
+namespace Repositories.Configurations
 {
     internal class ClientConfiguration : IEntityTypeConfiguration<Client>
     {
@@ -10,6 +10,9 @@ namespace Repositories
         {
             builder.ToTable("clients")
                 .HasKey(c => c.Id);
+
+            //builder.Property(c => c.Id)
+            //    .HasColumnName("Id");
 
             builder.Property(c => c.FirstName)
                 .HasColumnName("first_name");

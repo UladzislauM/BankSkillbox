@@ -26,7 +26,10 @@ namespace Bank.Views
             Clients_Box.ItemsSource = _service.Scores.Select(score => new ViewObject
             {
                 Id = score.Id,
-                FullNameAndTypeScore = $"{score.Client.FirstName} {score.Client.LastName} {score.ScoreType} {score.Balance}"
+                FullNameAndTypeScore = $"{_service.Clients[(int)score.ClientId - 1].FirstName}" +
+                $" {_service.Clients[(int)score.ClientId - 1].LastName} " +
+                $"{score.ScoreType} " +
+                $"{score.Balance}"
 
             }).Where(parameter => parameter.Id != _service.ScoreId);
             Clients_Box.DisplayMemberPath = "FullNameAndTypeScore";

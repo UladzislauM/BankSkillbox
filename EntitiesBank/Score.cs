@@ -13,7 +13,7 @@ namespace Bank
         private bool _isMoney;
         private DateTime _deadline;
         private DateTime _dateLastDividends;
-        private Client _client;
+        //private Client _client;
         private long _clientId;
         private bool _isActive;
         private ScoreTypes _scoreType;
@@ -146,17 +146,17 @@ namespace Bank
         /// <summary>
         /// Score's owner
         /// </summary>
-        public Client Client
-        {
-            get => _client;
-            set
-            {
-                if (_client == value)
-                    return;
-                this._client = value;
-                OnPropertyChanged(nameof(Client));
-            }
-        }
+        //public Client Client
+        //{
+        //    get => _client;
+        //    set
+        //    {
+        //        if (_client == value)
+        //            return;
+        //        this._client = value;
+        //        OnPropertyChanged(nameof(Client));
+        //    }
+        //}
         
         /// <summary>
         /// Score's owner id.

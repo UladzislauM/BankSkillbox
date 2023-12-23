@@ -1,28 +1,33 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using Bank;
 using Microsoft.EntityFrameworkCore;
 using System.Configuration;
 
-namespace Bank
+namespace Repositories
 {
     /// <summary>
     /// Class for connection to DB with the EntityFramework method.
     /// </summary>
-    internal class ConnectionDBMSQL
+    internal class ConnectionToDb
     {
         private DbMyEntitiesContext _connectionContext;
 
         /// <summary>
         /// Connect to db ADO.net.
         /// </summary>
-        /// <param name="dBName"></param>
-        /// <param name="dBSource"></param>
-        public void Connect()
+        public void Connect(string connectionName)
         {
             try
             {
                 var optionsBuilder = new DbContextOptionsBuilder<DbMyEntitiesContext>();
-                optionsBuilder.UseSqlServer(ConfigurationManager.ConnectionStrings["DBConnectionMS"].ConnectionString);
 
+                if (connectionName == "DBConnectionMS")
+                {
+                    optionsBuilder.UseSqlServer(ConfigurationManager.ConnectionStrings[connectionName].ConnectionString);
+                }
+                else if (connectionName == "DBConnectionPSQL")
+                {
+                    optionsBuilder.UseNpgsql(ConfigurationManager.ConnectionStrings[connectionName].ConnectionString);
+                }
                 _connectionContext = new DbMyEntitiesContext(optionsBuilder.Options);
             }
             catch

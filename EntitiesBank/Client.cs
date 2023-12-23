@@ -1,4 +1,6 @@
-﻿namespace Bank
+﻿using System.Text.Json.Serialization;
+
+namespace Bank
 {
     public class Client : MyNotification
     {
@@ -108,6 +110,7 @@
         /// <summary>
         /// Client's scores
         /// </summary>
+        [JsonIgnore]
         public List<Score> Scores
         {
             get => _scores;

@@ -1,6 +1,6 @@
 CREATE TABLE [dbo].[clients]
 (
-	[Id] BIGINT PRIMARY KEY NOT NULL, 
+	[id] BIGINT PRIMARY KEY NOT NULL, 
     [first_name] NVARCHAR(50) NULL, 
     [last_name] NVARCHAR(50) NULL, 
     [history] NVARCHAR(2000) NULL, 
@@ -10,7 +10,7 @@ CREATE TABLE [dbo].[clients]
 
 CREATE TABLE [dbo].[scores]
 (
-	[Id] BIGINT PRIMARY KEY NOT NULL, 
+	[id] BIGINT PRIMARY KEY NOT NULL, 
     [balance] DECIMAL(25, 10) NULL, 
     [percent] DECIMAL(10, 10) NULL, 
     [date_score] DATETIME NULL, 
