@@ -67,7 +67,11 @@ namespace Bank.Buisness
             {
                 Score score = new Score(scoreType);
 
-                int currentScoreId = (int)Scores[Scores.Count - 1].Id;
+                int currentScoreId = 0;
+                if (Scores.Count != 0)
+                {
+                    currentScoreId = (int)Scores[Scores.Count - 1].Id;
+                }
 
                 score.Id = currentScoreId + 1;
                 score.Deadline = score.DateScore.AddMonths(period);
