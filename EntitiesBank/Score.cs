@@ -13,7 +13,6 @@ namespace Bank
         private bool _isMoney;
         private DateTime _deadline;
         private DateTime _dateLastDividends;
-        //private Client _client;
         private long _clientId;
         private bool _isActive;
         private ScoreTypes _scoreType;
@@ -21,8 +20,8 @@ namespace Bank
         public Score(ScoreTypes scoreType)
         {
             ScoreType = scoreType;
-            _dateScore = DateTime.Now;
-            _dateLastDividends = DateTime.Now;
+            _dateScore = DateTime.UtcNow;
+            _dateLastDividends = DateTime.UtcNow;
         }
 
         /// <summary>
@@ -81,6 +80,7 @@ namespace Bank
             {
                 if (_dateScore == value)
                     return;
+                this._dateScore = value;
                 OnPropertyChanged(nameof(DateScore));
             }
         }
@@ -95,6 +95,7 @@ namespace Bank
             {
                 if (_isCapitalization == value)
                     return;
+                this._isCapitalization = value;
                 OnPropertyChanged(nameof(IsCapitalization));
             }
         }
@@ -109,6 +110,7 @@ namespace Bank
             {
                 if (_isMoney == value)
                     return;
+                this._isMoney = value;
                 OnPropertyChanged(nameof(IsMoney));
             }
         }
@@ -142,21 +144,6 @@ namespace Bank
                 OnPropertyChanged(nameof(DateLastDividends));
             }
         }
-
-        /// <summary>
-        /// Score's owner
-        /// </summary>
-        //public Client Client
-        //{
-        //    get => _client;
-        //    set
-        //    {
-        //        if (_client == value)
-        //            return;
-        //        this._client = value;
-        //        OnPropertyChanged(nameof(Client));
-        //    }
-        //}
         
         /// <summary>
         /// Score's owner id.

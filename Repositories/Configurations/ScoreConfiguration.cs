@@ -11,8 +11,8 @@ namespace Repositories.Configurations
             builder.ToTable("scores")
                 .HasKey(s => s.Id);
 
-            //builder.Property(s => s.Id)
-            //    .HasColumnName("Id");
+            builder.Property(s => s.Id)
+                .HasColumnName("id");
 
             builder.Property(s => s.Balance)
                 .HasColumnName("balance");
@@ -21,7 +21,8 @@ namespace Repositories.Configurations
                 .HasColumnName("percent");
 
             builder.Property(s => s.DateScore)
-                .HasColumnName("date_score");
+                .HasColumnName("date_score")
+                .HasColumnType("timestamp with time zone");
 
             builder.Property(s => s.IsCapitalization)
                 .HasColumnName("is_capitalization")
@@ -32,10 +33,12 @@ namespace Repositories.Configurations
                 .IsRequired();
 
             builder.Property(s => s.Deadline)
-                .HasColumnName("deadline");
+                .HasColumnName("deadline")
+                .HasColumnType("timestamp with time zone");
 
             builder.Property(s => s.DateLastDividends)
-                .HasColumnName("date_last_dividends");
+                .HasColumnName("date_last_dividends")
+                .HasColumnType("timestamp with time zone");
 
 
             builder.Property(s => s.ScoreType)

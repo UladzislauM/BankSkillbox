@@ -7,21 +7,21 @@
     prestige 	INT, 
     status 		CHARACTER VARYING(30) DEFAULT 'General' NOT null,
     PRIMARY KEY (id)
-)
+);
 
 CREATE TABLE IF NOT EXISTS scores
 (
 	id 					BIGINT NOT NULL, 
     balance 			DECIMAL(25, 10), 
     percent 			DECIMAL(10, 10), 
-    date_score 			DATE, 
+    date_score 			timestamp, 
     is_capitalization 	BOOLEAN DEFAULT FALSE NOT NULL, 
     is_money 			BOOLEAN DEFAULT FALSE NOT NULL, 
-    deadline 			DATE, 
-    date_last_dividends DATE, 
+    deadline 			timestamp, 
+    date_last_dividends timestamp, 
     client_id 			BIGINT NOT NULL, 
     score_type 			CHARACTER VARYING(30) NOT NULL, 
     is_active 			BOOLEAN DEFAULT FALSE NOT NULL,
     PRIMARY KEY (id),
 	FOREIGN KEY (client_id) REFERENCES clients (id)
-)
+);

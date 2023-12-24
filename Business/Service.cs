@@ -12,6 +12,8 @@ namespace Bank.Buisness
     {
         public string DBName { get; set; }
         public string DBSource { get; set; }
+
+        private const string DbConnectionNameForLoadEntities = "DBConnectionMS";
         private readonly NLog.Logger _logger;
         private readonly RepositoryForDB _repositoryForDB;
         private readonly RepositoryForJson _repositoryForJson;
@@ -77,7 +79,6 @@ namespace Bank.Buisness
                 score.Deadline = score.DateScore.AddMonths(period);
                 score.Balance = sum;
                 score.IsCapitalization = isCapitalization;
-                //score.Client = Clients[(int)ClientId - 1];
                 score.ClientId = (int)ClientId;
                 score.IsActive = true;
 
@@ -146,9 +147,9 @@ namespace Bank.Buisness
             {
                 Client client = new Client(status);
 
-                int currentClientId = Clients.Count;
+                int currentClientId = Clients.Count + 1;
 
-                client.Id = ClientId++;
+                client.Id = currentClientId;
                 client.FirstName = firstName;
                 client.LastName = lastName;
                 client.History = "";
@@ -197,10 +198,10 @@ namespace Bank.Buisness
             try
             {
                 _repositoryForDB.UpdateEntitiesIntoDB(Clients.ToList(), "DBConnectionMS");
-                //_repositoryForDB.UpdateEntitiesIntoDB(Clients.ToList(), "DBConnectionPSQL");
+                _repositoryForDB.UpdateEntitiesIntoDB(Clients.ToList(), "DBConnectionPSQL");
 
                 _repositoryForDB.UpdateEntitiesIntoDB(Scores.ToList(), "DBConnectionMS");
-                //_repositoryForDB.UpdateEntitiesIntoDB(Scores.ToList(), "DBConnectionPSQL");
+                _repositoryForDB.UpdateEntitiesIntoDB(Scores.ToList(), "DBConnectionPSQL");
 
                 _logger.Info($"General data saved in the DB");
             }
@@ -220,7 +221,7 @@ namespace Bank.Buisness
         {
             try
             {
-                ObservableCollection<Client> clients = new ObservableCollection<Client>(_repositoryForDB.FindEntitiesFromDB<Client>("DBConnectionMS"));
+                ObservableCollection<Client> clients = new ObservableCollection<Client>(_repositoryForDB.FindEntitiesFromDB<Client>(DbConnectionNameForLoadEntities));
 
                 if (clients.Count != 0)
                 {
@@ -246,7 +247,7 @@ namespace Bank.Buisness
         {
             try
             {
-                ObservableCollection<Score> scores = new ObservableCollection<Score>(_repositoryForDB.FindEntitiesFromDB<Score>("DBConnectionMS"));
+                ObservableCollection<Score> scores = new ObservableCollection<Score>(_repositoryForDB.FindEntitiesFromDB<Score>(DbConnectionNameForLoadEntities));
 
                 if (scores.Count != 0)
                 {

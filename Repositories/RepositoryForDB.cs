@@ -225,8 +225,6 @@ namespace Bank
             {
                 dbContext.Clients.Add(client);
 
-                //dbContext.SaveChanges();
-
                 newClient = client;
             }
             return newClient;
@@ -235,18 +233,18 @@ namespace Bank
         private Score UpdateScore(DbMyEntitiesContext dbContext, Score score)
         {
             Score existingScore = dbContext.Scores.FirstOrDefault(s => s.Id == score.Id);
+
             Score newScore = null;
 
             if (existingScore != null)
             {
+                existingScore.DateScore = DateTime.SpecifyKind(score.DateScore, DateTimeKind.Utc);
+                existingScore.DateLastDividends = DateTime.SpecifyKind(score.DateLastDividends, DateTimeKind.Utc);
+                existingScore.Deadline = DateTime.SpecifyKind(score.Deadline, DateTimeKind.Utc);
                 existingScore.Balance = score.Balance;
                 existingScore.Percent = score.Percent;
-                existingScore.DateScore = score.DateScore;
                 existingScore.IsCapitalization = score.IsCapitalization;
                 existingScore.IsMoney = score.IsMoney;
-                existingScore.Deadline = score.Deadline;
-                existingScore.DateLastDividends = score.DateLastDividends;
-                //existingScore.Client.Id = score.Id;
                 existingScore.ScoreType = score.ScoreType;
                 existingScore.IsActive = score.IsActive;
 
@@ -259,8 +257,6 @@ namespace Bank
                 dbContext.Scores.Add(score);
 
                 newScore = score;
-
-                //dbContext.SaveChanges();
             }
             return newScore;
         }

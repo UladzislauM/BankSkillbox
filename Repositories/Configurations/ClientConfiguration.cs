@@ -11,8 +11,8 @@ namespace Repositories.Configurations
             builder.ToTable("clients")
                 .HasKey(c => c.Id);
 
-            //builder.Property(c => c.Id)
-            //    .HasColumnName("Id");
+            builder.Property(c => c.Id)
+                .HasColumnName("id");
 
             builder.Property(c => c.FirstName)
                 .HasColumnName("first_name");
