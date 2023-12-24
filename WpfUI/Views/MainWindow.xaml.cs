@@ -152,6 +152,8 @@ namespace Bank
         {
             AddClientView addClientView = new AddClientView(_service);
             addClientView.ShowDialog();
+
+            WritePartCollectionToView();
         }
 
         /// <summary>
@@ -196,7 +198,7 @@ namespace Bank
                     if (client != null)
                     {
                         _service.ClientId = client.Id;
-                        WriteClientScoreToView<Client>(client.Id);
+                        WriteEntityToView<Client>(client.Id);
                     }
                 }
             }
@@ -243,7 +245,7 @@ namespace Bank
                     if (score != null)
                     {
                         _service.ScoreId = score.Id;
-                        WriteClientScoreToView<Score>(score.Id);
+                        WriteEntityToView<Score>(score.Id);
                     }
                 }
             }
@@ -268,15 +270,17 @@ namespace Bank
                     createScore.capitalizationCheckBox.Visibility = Visibility.Visible;
                     createScore.ShowDialog();
 
-                    dgScoresList.Items.Refresh();
                     break;
                 case MessageBoxResult.No:
                     createScore.capitalizationCheckBox.Visibility = Visibility.Hidden;
                     createScore.ShowDialog();
 
-                    dgScoresList.Items.Refresh();
                     return;
             }
+
+            WriteEntityToView<Client>(_service.ClientId);
+
+            MessageBox.Show("Score added");
         }
 
         /// <summary>
@@ -305,6 +309,8 @@ namespace Bank
                 }
 
                 _service.SaveJsonWithAllData();
+
+                MessageBox.Show("All data saved");
             }
             catch (JsonException)
             {
@@ -359,6 +365,8 @@ namespace Bank
             try
             {
                 _service.SaveAllDataToDB();
+
+                MessageBox.Show("All data saved");
             }
             catch (Exception ex)
             {
@@ -391,9 +399,11 @@ namespace Bank
             try
             {
                 _service.Clients.Clear();
+                dgClientsList.ItemsSource = "";
                 _service.Scores.Clear();
-                _service.ClientId = 0;
-                _service.ScoreId = 0;
+                dgScoresList.ItemsSource = "";
+                _service.ClientId = 1;
+                _service.ScoreId = 1;
             }
             catch (Exception ex)
             {
@@ -487,7 +497,7 @@ namespace Bank
             }
         }
 
-        private void WriteClientScoreToView<T>(long id)
+        private void WriteEntityToView<T>(long id)
         {
             if (typeof(T) == typeof(Client))
             {
