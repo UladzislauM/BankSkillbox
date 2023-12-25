@@ -1,0 +1,72 @@
+﻿<Window x:Class="Bank.AddClientView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="AddKlient"         
+        Height="200" 
+        MaxHeight="200"
+        Width="350"
+        MaxWidth="350">
+    <Grid Margin="0,0,2,2">
+        <StackPanel Orientation="Vertical" Margin="181,10,10,90">
+            <Button IsDefault="True"
+                Click="Button_Click"
+                Content="OK"
+                Height="22"/>
+            <Button Content="Отмена" 
+                IsCancel="True"
+                Height="22"
+                Margin="0, 10, 0, 0"/>
+        </StackPanel>
+        <StackPanel Orientation="Vertical" Margin="10,6,159,4">
+
+            <TextBlock HorizontalAlignment="Left"
+                   Margin="0,0,0,0"
+                   TextWrapping="Wrap"
+                   Text="Выберите тип клиента" 
+                   VerticalAlignment="Top"
+                   Height="18"/>
+            <ComboBox x:Name="boxPeople"
+            HorizontalAlignment="Left" 
+                  Margin="0,3,0,0" 
+                  VerticalAlignment="Center" 
+                  Height="22"
+                  Width="148">
+                <ComboBoxItem Content="Обычные клиенты" 
+                          Selected="ComboBoxItem_Selected_normPeople"/>
+                <ComboBoxItem Content="VIP Клиенты" 
+                          Selected="ComboBoxItem_Selected_VIPPeople"/>
+                <ComboBoxItem Content="Юр. Клиенты" 
+                          Selected="ComboBoxItem_Selected_corpCkients"/>
+            </ComboBox>
+            <TextBlock HorizontalAlignment="Left"
+                 Margin="0,3,0,0"
+                 TextWrapping="Wrap"
+                 Text="Имя" 
+                 VerticalAlignment="Center"
+                 Height="18"/>
+            <TextBox HorizontalAlignment="Left" 
+                 Margin="0,3,0,0" 
+                 TextWrapping="Wrap" 
+                 x:Name="ClientFirstName" 
+                 Height="22"
+                 Width="148"/>
+            <TextBlock HorizontalAlignment="Left"
+                 Margin="0,3,0,0"
+                 TextWrapping="Wrap"
+                 Text="Фамилия" 
+                 VerticalAlignment="Center"
+                 Width="148"
+                 Height="18"/>
+            <TextBox HorizontalAlignment="Left" 
+                 Margin="0,3,0,0" 
+                 TextWrapping="Wrap" 
+                 VerticalAlignment="Center"
+                 Height="22"
+                 Width="148"
+                 x:Name="ClientLastName"/>
+        </StackPanel>
+    </Grid>
+</Window>
