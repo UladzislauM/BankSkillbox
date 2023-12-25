@@ -10,14 +10,16 @@ namespace Bank
     public partial class AddClientView : Window
     {
         private readonly Service _service;
+        private readonly NLog.Logger _logger;
 
         private Client.Statuses _clientStatus;
 
-        public AddClientView(Service service)
+        public AddClientView(Service service, NLog.Logger logger)
         {
             InitializeComponent();
 
             _service = service;
+            _logger = logger;
         }
 
         /// <summary>
@@ -29,9 +31,10 @@ namespace Bank
             {
                 _service.CreateNewClient(_clientStatus, ClientFirstName.Text, ClientLastName.Text);
             }
-            catch (ClientException)
+            catch (ClientException ex)
             {
-                MessageBox.Show("Something went wrong...");
+                _logger.Error("Something went wrong: " + ex.Message);
+                MessageBox.Show("Something went wrong: " + ex.Message);
             }
 
             Close();

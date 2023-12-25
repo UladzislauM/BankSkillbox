@@ -1,7 +1,5 @@
 ﻿using Bank.Buisness;
 using MarshalsExceptions;
-using System;
-using System.Linq;
 using System.Windows;
 
 namespace Bank.Views
@@ -12,12 +10,15 @@ namespace Bank.Views
     public partial class ChoosingRecipient : Window
     {
         private readonly Service _service;
+        private readonly NLog.Logger _logger;
 
-        public ChoosingRecipient(Service service)
+        public ChoosingRecipient(Service service, NLog.Logger logger)
         {
             InitializeComponent();
 
             _service = service;
+            _logger = logger;
+
             CreateAnAnonymousClass();
         }
 
@@ -52,22 +53,26 @@ namespace Bank.Views
 
                         if (!resualt)
                         {
-                            MessageBox.Show("Something went wrong");
+                            _logger.Error("Something went wrong from send money");
+                            MessageBox.Show("Something went wrong from send money");
                         }
                     }
                     else
                     {
+                        _logger.Error("Field sum is empty.");
                         MessageBox.Show("Field sum is empty.");
                     }
                 }
                 else
                 {
+                    _logger.Error("Choose recipient.");
                     MessageBox.Show("Choose recipient.");
                 }
             }
-            catch (TransactionException)
+            catch (TransactionException ex)
             {
-                MessageBox.Show("Unable to send money");
+                _logger.Error(ex.Message + " Unable to send money");
+                MessageBox.Show(ex.Message + " Unable to send money");
             }
 
             Close();

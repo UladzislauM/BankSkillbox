@@ -2,6 +2,7 @@
 using Bank.Views;
 using MarshalsExceptions;
 using Microsoft.Win32;
+using NLog;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,11 +13,14 @@ namespace Bank
     public partial class MainWindow : Window
     {
         private readonly Service _service;
+        private readonly NLog.Logger _logger;
 
         public MainWindow()
         {
             InitializeComponent();
-            _service = new Service();
+
+            _logger = LogManager.GetCurrentClassLogger();
+            _service = new Service(_logger);
 
             _service.SavedJsonObject += _service_SavedJsonObject;
             _service.ImportantScores += _service_ImportantScores;
@@ -150,7 +154,7 @@ namespace Bank
         /// <param name="e"></param>
         private void Button_Click_AddClient(object sender, RoutedEventArgs e)
         {
-            AddClientView addClientView = new AddClientView(_service);
+            AddClientView addClientView = new AddClientView(_service, _logger);
             addClientView.ShowDialog();
 
             WritePartCollectionToView();
@@ -217,9 +221,9 @@ namespace Bank
 
                 _service.Clients[(int)editedClient.Id - 1] = editedClient;
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Something went wrong");
+                MessageBox.Show("Something went wrong: " + ex.Message);
             }
         }
 
@@ -262,7 +266,7 @@ namespace Bank
                 "Создание счета",
                 MessageBoxButton.YesNoCancel);
 
-            CreateScore createScore = new CreateScore(_service);
+            CreateScore createScore = new CreateScore(_service, _logger);
 
             switch (result)
             {
@@ -312,9 +316,9 @@ namespace Bank
 
                 MessageBox.Show("All data saved");
             }
-            catch (JsonException)
+            catch (JsonException ex)
             {
-                MessageBox.Show("Something went wrong...");
+                MessageBox.Show("Something went wrong: " + ex.Message);
             }
         }
 
@@ -349,9 +353,9 @@ namespace Bank
 
                 Task.Run(() => { _service.CheckDeadline(); });
             }
-            catch (JsonException)
+            catch (JsonException ex)
             {
-                MessageBox.Show("Something went wrong with open json...");
+                MessageBox.Show("Something went wrong with open json: " + ex.Message);
             }
         }
 
@@ -370,7 +374,7 @@ namespace Bank
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);//TODO
+                MessageBox.Show("Something went wrong: " + ex.Message);
             }
         }
 
@@ -390,7 +394,7 @@ namespace Bank
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);//TODO
+                MessageBox.Show("Something went wrong: " + ex.Message);
             }
         }
 
@@ -407,7 +411,7 @@ namespace Bank
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);//TODO
+                MessageBox.Show("Something went wrong: " + ex.Message);
             }
         }
 
@@ -422,9 +426,9 @@ namespace Bank
             {
                 _service.CheckDeadline();
             }
-            catch (ScoreException)
+            catch (ScoreException ex)
             {
-                MessageBox.Show("Something went wrong...");
+                MessageBox.Show("Something went wrong: " + ex.Message);
             }
         }
 
@@ -445,7 +449,7 @@ namespace Bank
         /// <param name="e"></param>
         private void Button_Click_SendMoney(object sender, RoutedEventArgs e)
         {
-            ChoosingRecipient choosingRecipient = new ChoosingRecipient(_service);
+            ChoosingRecipient choosingRecipient = new ChoosingRecipient(_service, _logger);
 
             choosingRecipient.Show();
 
@@ -461,54 +465,68 @@ namespace Bank
 
         private void WritePartCollectionToView(Client.Statuses? status = null, bool isScore = false, Score.ScoreTypes? typeScore = null, bool isAllScores = false)
         {
-            dgScoresList.ItemsSource = null;
-            dgClientsList.ItemsSource = null;
+            try
+            {
+                dgScoresList.ItemsSource = null;
+                dgClientsList.ItemsSource = null;
 
-            if (status == null)
-            {
-                dgClientsList.ItemsSource = _service.Clients;
-            }
-            else
-            {
-                List<Client> generalClients = _service.Clients.Where(parameter => parameter.Status == status).ToList();
-                dgClientsList.ItemsSource = new ObservableCollection<Client>(generalClients);
-            }
-
-            if (isScore)
-            {
-                if (typeScore.HasValue)
+                if (status == null)
                 {
-                    List<Score> scoresGeneralPeoples = _service.Scores.Where(parameter
-                        => _service.Clients[(int)parameter.ClientId - 1].Status == status
-                        && parameter.ScoreType == typeScore).ToList();
-                        dgScoresList.ItemsSource = new ObservableCollection<Score>(scoresGeneralPeoples);
+                    dgClientsList.ItemsSource = _service.Clients;
                 }
                 else
                 {
-                    List<Score> scoresGeneralPeoples = _service.Scores.Where(parameter 
-                        => _service.Clients[(int)parameter.ClientId - 1].Status == status).ToList();
+                    List<Client> generalClients = _service.Clients.Where(parameter => parameter.Status == status).ToList();
+                    dgClientsList.ItemsSource = new ObservableCollection<Client>(generalClients);
+                }
+
+                if (isScore)
+                {
+                    if (typeScore.HasValue)
+                    {
+                        List<Score> scoresGeneralPeoples = _service.Scores.Where(parameter
+                            => _service.Clients[(int)parameter.ClientId - 1].Status == status
+                            && parameter.ScoreType == typeScore).ToList();
                         dgScoresList.ItemsSource = new ObservableCollection<Score>(scoresGeneralPeoples);
+                    }
+                    else
+                    {
+                        List<Score> scoresGeneralPeoples = _service.Scores.Where(parameter
+                            => _service.Clients[(int)parameter.ClientId - 1].Status == status).ToList();
+                        dgScoresList.ItemsSource = new ObservableCollection<Score>(scoresGeneralPeoples);
+                    }
+                }
+                if (isAllScores)
+                {
+                    ObservableCollection<Score> allScores = _service.Scores;
+                    dgScoresList.ItemsSource = allScores;
                 }
             }
-            if (isAllScores)
+            catch (Exception ex)
             {
-                ObservableCollection<Score> allScores = _service.Scores;
-                dgScoresList.ItemsSource = allScores;
+                MessageBox.Show("Something went wrong: " + ex.Message);
             }
         }
 
         private void WriteEntityToView<T>(long id)
         {
-            if (typeof(T) == typeof(Client))
+            try
             {
-                List<Score> scores = _service.Scores.Where(parameter => parameter.ClientId == id).ToList();
-                dgScoresList.ItemsSource = new ObservableCollection<Score>(scores);
+                if (typeof(T) == typeof(Client))
+                {
+                    List<Score> scores = _service.Scores.Where(parameter => parameter.ClientId == id).ToList();
+                    dgScoresList.ItemsSource = new ObservableCollection<Score>(scores);
+                }
+                else if (typeof(T) == typeof(Score))
+                {
+                    List<Score> scores = _service.Scores.Where(parameter => parameter.Id == id).ToList();
+                    List<Client> clients = _service.Clients.Where(paremetr => paremetr.Id == scores[0].ClientId).ToList();
+                    dgClientsList.ItemsSource = new ObservableCollection<Client>(clients);
+                }
             }
-            else if (typeof(T) == typeof(Score))
+            catch (Exception ex)
             {
-                List<Score> scores = _service.Scores.Where(parameter => parameter.Id == id).ToList();
-                List<Client> clients = _service.Clients.Where(paremetr => paremetr.Id == scores[0].ClientId).ToList();
-                dgClientsList.ItemsSource = new ObservableCollection<Client>(clients);
+                MessageBox.Show("Something went wrong: " + ex.Message);
             }
         }
 

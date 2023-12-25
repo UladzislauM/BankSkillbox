@@ -39,9 +39,9 @@ namespace Bank.Buisness
         public ObservableCollection<Score> Scores;
         public ObservableCollection<Client> Clients;
 
-        public Service()
+        public Service(NLog.Logger logger)
         {
-            _logger = LogManager.GetCurrentClassLogger();
+            _logger = logger;
             _repositoryForDB = new RepositoryForDB();
             _repositoryForJson = new RepositoryForJson();
 
@@ -104,15 +104,15 @@ namespace Bank.Buisness
 
                 _logger.Info($"A {score.ScoreType} account has been created for the user with id = {score.ClientId}");
             }
-            catch (DBException)
+            catch (DBException ex)
             {
-                _logger.Error("Something went wrong with DB");
-                throw new DBException("Something went wrong with DB");
+                _logger.Error(ex.Message + " Create new score");
+                throw new DBException(ex.Message + " Create new score");
             }
-            catch
+            catch (Exception ex)
             {
-                _logger.Error("Something went wrong with the creation of the Score");
-                throw new ScoreException("Something went wrong with the creation of the Score");
+                _logger.Error(ex.Message + " Create new score");
+                throw new ScoreException(ex.Message + " Create new score");
             }
         }
 
@@ -128,10 +128,10 @@ namespace Bank.Buisness
                 _repositoryForDB.UpdateEntityIntoDB(score, "DBConnectionMS");
                 _repositoryForDB.UpdateEntityIntoDB(score, "DBConnectionPSQL");
             }
-            catch (DBException)
+            catch (DBException ex)
             {
-                _logger.Error("Something went wrong with DB");
-                throw new DBException("Something went wrong with DB");
+                _logger.Error(ex.Message + " Update score");
+                throw new DBException(ex.Message + " Update score");
             }
         }
 
@@ -158,15 +158,15 @@ namespace Bank.Buisness
 
                 _logger.Info($"Client {client.FirstName} {client.LastName} has been created.");
             }
-            catch (DBException)
+            catch (DBException ex)
             {
-                _logger.Error("Something went wrong with DB");
-                throw new DBException("Something went wrong with DB");
+                _logger.Error(ex.Message + " Create new client");
+                throw new DBException(ex.Message + " Create new client");
             }
-            catch
+            catch (Exception ex)
             {
-                _logger.Error("Something went wrong with the creation of the Client");
-                throw new ClientException("Something went wrong with the creation of the Client");
+                _logger.Error(ex.Message + " Create new client");
+                throw new ClientException(ex.Message + " Create new client");
             }
         }
 
@@ -182,10 +182,10 @@ namespace Bank.Buisness
                 _repositoryForDB.UpdateEntityIntoDB(client, "DBConnectionMS");
                 _repositoryForDB.UpdateEntityIntoDB(client, "DBConnectionPSQL");
             }
-            catch (DBException)
+            catch (DBException ex)
             {
-                _logger.Error("Something went wrong with DB");
-                throw new DBException("Something went wrong with DB");
+                _logger.Error(ex.Message + "Update client");
+                throw new DBException(ex.Message + "Update client");
             }
         }
 
@@ -205,10 +205,10 @@ namespace Bank.Buisness
 
                 _logger.Info($"General data saved in the DB");
             }
-            catch
+            catch (Exception ex)
             {
-                _logger.Error("Something went wrong while saveing data to the DB");
-                throw new DBException("Something went wrong while saveing data to the DB");
+                _logger.Error(ex.Message + " Save all to db");
+                throw new DBException(ex.Message + " Save all to db");
             }
         }
 
@@ -232,9 +232,10 @@ namespace Bank.Buisness
 
                 return clients;
             }
-            catch
+            catch (DBException ex)
             {
-                throw new DBException("Load Clients exception");
+                _logger.Error(ex.Message + " Load all clients.");
+                throw new DBException(ex.Message + " Load all clients.");
             }
         }
 
@@ -258,9 +259,10 @@ namespace Bank.Buisness
 
                 return scores;
             }
-            catch
+            catch (Exception ex)
             {
-                throw new DBException("Load Scores exception");
+                _logger.Error(ex.Message + " Load scores.");
+                throw new DBException(ex.Message + " Load scores.");
             }
         }
 
@@ -281,10 +283,10 @@ namespace Bank.Buisness
 
                 _logger.Info($"General Json saved");
             }
-            catch
+            catch (Exception ex)
             {
-                _logger.Error("General Json don't save");
-                throw new JsonException("General Json don't save");
+                _logger.Error(ex.Message + " General Json don't save");
+                throw new JsonException(ex.Message + " General Json don't save");
             }
         }
 
@@ -315,10 +317,10 @@ namespace Bank.Buisness
 
                 return stateOfSave;
             }
-            catch
+            catch (Exception ex)
             {
-                _logger.Error($"Save json data failed");
-                throw new JsonException("Save json data failed");
+                _logger.Error(ex.Message + " Save json data failed");
+                throw new JsonException(ex.Message + " Save json data failed");
             }
         }
 
@@ -345,10 +347,10 @@ namespace Bank.Buisness
 
                 _logger.Info($"Json opened.");
             }
-            catch
+            catch (Exception ex)
             {
-                _logger.Error($"Open Json failed.");
-                throw new JsonException("Open Json failed");
+                _logger.Error(ex.Message + " Open Json failed.");
+                throw new JsonException(ex.Message + " Open Json failed");
             }
         }
 
@@ -403,10 +405,10 @@ namespace Bank.Buisness
                     ImportantScores.Invoke(identifiedScores);
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                _logger.Error("Score verification failed");
-                throw new ScoreException("Score verification failed");
+                _logger.Error(ex.Message + " Score verification failed");
+                throw new ScoreException(ex.Message + " Score verification failed");
             }
         }
 
@@ -446,10 +448,10 @@ namespace Bank.Buisness
                     return false;
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                _logger.Error("Send money failed.");
-                throw new TransactionException("Send money failed.");
+                _logger.Error(ex.Message + " Send money failed.");
+                throw new TransactionException(ex.Message + " Send money failed.");
             }
         }
 

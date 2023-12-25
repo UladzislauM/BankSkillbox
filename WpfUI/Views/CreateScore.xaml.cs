@@ -1,6 +1,5 @@
 ﻿using Bank.Buisness;
 using MarshalsExceptions;
-using System;
 using System.Windows;
 
 namespace Bank
@@ -11,12 +10,14 @@ namespace Bank
     public partial class CreateScore : Window
     {
         private readonly Service _service;
+        private readonly NLog.Logger _logger;
 
-        public CreateScore(Service service)
+        public CreateScore(Service service, NLog.Logger logger)
         {
             InitializeComponent();
 
             _service = service;
+            _logger = logger;
         }
         /// <summary>
         /// Period
@@ -60,12 +61,14 @@ namespace Bank
                 }
                 else
                 {
-                    MessageBox.Show("Введите число (не букву)");
+                    _logger.Error("Enter the number (not a word)");
+                    MessageBox.Show("Enter the number (not a word)");
                 }
             }
-            catch (ScoreException)
+            catch (ScoreException ex)
             {
-                MessageBox.Show("Something went wrong...");
+                _logger.Error("Something went wrong: " + ex.Message);
+                MessageBox.Show("Something went wrong: " + ex.Message);
             }
 
             Close();
