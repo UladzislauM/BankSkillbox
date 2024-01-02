@@ -1,5 +1,6 @@
 ﻿using Bank.Buisness;
 using MarshalsExceptions;
+using Microsoft.Extensions.Logging;
 using System.Windows;
 
 namespace Bank
@@ -10,9 +11,9 @@ namespace Bank
     public partial class CreateScore : Window
     {
         private readonly Service _service;
-        private readonly NLog.Logger _logger;
+        private readonly ILogger<CreateScore> _logger;
 
-        public CreateScore(Service service, NLog.Logger logger)
+        public CreateScore(Service service, ILogger<CreateScore> logger)
         {
             InitializeComponent();
 
@@ -61,13 +62,13 @@ namespace Bank
                 }
                 else
                 {
-                    _logger.Error("Enter the number (not a word)");
+                    _logger.LogError("Enter the number (not a word)");
                     MessageBox.Show("Enter the number (not a word)");
                 }
             }
             catch (ScoreException ex)
             {
-                _logger.Error("Something went wrong: " + ex.Message);
+                _logger.LogError("Something went wrong: " + ex.Message);
                 MessageBox.Show("Something went wrong: " + ex.Message);
             }
 

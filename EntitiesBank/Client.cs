@@ -2,7 +2,7 @@
 
 namespace Bank
 {
-    public class Client : MyNotification
+    public class Client : Notification
     {
         private long _id;
         private string _firstName;

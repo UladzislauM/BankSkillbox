@@ -2,12 +2,12 @@
 
 namespace Bank
 {
-    internal class SingleCommand : Command
+    internal class DefaultCommand : Command
     {
         private readonly Action<object> _execute;
         private readonly Func<object?, bool>? _canExecute;
 
-        public SingleCommand(Action<object?> execute, Func<object?, bool>? canExecute = null)
+        public DefaultCommand(Action<object?> execute, Func<object?, bool>? canExecute = null)
         {
             _execute = execute;
             _canExecute = canExecute;

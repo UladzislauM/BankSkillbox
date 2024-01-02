@@ -1,5 +1,6 @@
 ﻿using Bank.Buisness;
 using MarshalsExceptions;
+using Microsoft.Extensions.Logging;
 using System.Windows;
 
 namespace Bank
@@ -10,11 +11,11 @@ namespace Bank
     public partial class AddClientView : Window
     {
         private readonly Service _service;
-        private readonly NLog.Logger _logger;
+        private readonly ILogger<AddClientView> _logger;
 
         private Client.Statuses _clientStatus;
 
-        public AddClientView(Service service, NLog.Logger logger)
+        public AddClientView(Service service, ILogger<AddClientView> logger)
         {
             InitializeComponent();
 
@@ -33,7 +34,7 @@ namespace Bank
             }
             catch (ClientException ex)
             {
-                _logger.Error("Something went wrong: " + ex.Message);
+                _logger.LogError("Something went wrong: " + ex.Message);
                 MessageBox.Show("Something went wrong: " + ex.Message);
             }
 

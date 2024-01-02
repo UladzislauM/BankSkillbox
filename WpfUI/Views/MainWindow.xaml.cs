@@ -1,9 +1,11 @@
 ﻿using Bank.Buisness;
 using Bank.Views;
 using MarshalsExceptions;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
-using NLog;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -13,14 +15,15 @@ namespace Bank
     public partial class MainWindow : Window
     {
         private readonly Service _service;
-        private readonly NLog.Logger _logger;
+        private readonly ILogger<MainWindow> _logger;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            _logger = LogManager.GetCurrentClassLogger();
-            _service = new Service(_logger);
+            ILogger<Service> servLogger = new LoggerFactory().CreateLogger<Service>();
+            _service = new Service(servLogger);
+            _logger = new LoggerFactory().CreateLogger<MainWindow>();
 
             _service.SavedJsonObject += _service_SavedJsonObject;
             _service.ImportantScores += _service_ImportantScores;
@@ -154,8 +157,8 @@ namespace Bank
         /// <param name="e"></param>
         private void Button_Click_AddClient(object sender, RoutedEventArgs e)
         {
-            AddClientView addClientView = new AddClientView(_service, _logger);
-            addClientView.ShowDialog();
+            //AddClientView addClientView = new AddClientView(_service, logger: _logger);
+            //addClientView.ShowDialog();
 
             WritePartCollectionToView();
         }
@@ -266,21 +269,21 @@ namespace Bank
                 "Создание счета",
                 MessageBoxButton.YesNoCancel);
 
-            CreateScore createScore = new CreateScore(_service, _logger);
+            //CreateScore createScore = new CreateScore(_service, _logger);
 
-            switch (result)
-            {
-                case MessageBoxResult.Yes:
-                    createScore.capitalizationCheckBox.Visibility = Visibility.Visible;
-                    createScore.ShowDialog();
+            //switch (result)
+            //{
+            //    case MessageBoxResult.Yes:
+            //        createScore.capitalizationCheckBox.Visibility = Visibility.Visible;
+            //        createScore.ShowDialog();
 
-                    break;
-                case MessageBoxResult.No:
-                    createScore.capitalizationCheckBox.Visibility = Visibility.Hidden;
-                    createScore.ShowDialog();
+            //        break;
+            //    case MessageBoxResult.No:
+            //        createScore.capitalizationCheckBox.Visibility = Visibility.Hidden;
+            //        createScore.ShowDialog();
 
-                    return;
-            }
+            //        return;
+            //}
 
             WriteEntityToView<Client>(_service.ClientId);
 
@@ -292,128 +295,124 @@ namespace Bank
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Button_Click_SaveJson(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                SaveFileDialog saveFileDialog = new SaveFileDialog();
+        //private void Button_Click_SaveJson(object sender, RoutedEventArgs e)
+        //{
+        //    try
+        //    {
+        //        SaveFileDialog saveFileDialog = new SaveFileDialog();
 
-                if (_service.JsonAddress != "")
-                {
-                    saveFileDialog.FileName = _service.JsonAddress;
-                }
+        //        //if (_service.JsonAddress != "")
+        //        //{
+        //        //    saveFileDialog.FileName = _service.JsonAddress;
+        //        //}
 
-                saveFileDialog.DefaultExt = ".json";
-                saveFileDialog.Filter = "JSON Files|*.json|All Files|*.*";
-                saveFileDialog.Title = "Сохранить файл";
+        //        saveFileDialog.DefaultExt = ".json";
+        //        saveFileDialog.Filter = "JSON Files|*.json|All Files|*.*";
+        //        saveFileDialog.Title = "Сохранить файл";
 
-                if (saveFileDialog.ShowDialog() == true)
-                {
-                    _service.JsonAddress = saveFileDialog.FileName;
-                }
-
-                _service.SaveJsonWithAllData();
-
-                MessageBox.Show("All data saved");
-            }
-            catch (JsonException ex)
-            {
-                MessageBox.Show("Something went wrong: " + ex.Message);
-            }
-        }
+        //        if (saveFileDialog.ShowDialog() == true)
+        //        {
+        //            _service.JsonAddress = saveFileDialog.FileName;
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show("Something went wrong: " + ex.Message);
+        //    }
+        //}
 
         /// <summary>
         /// Action for the "Open json" button
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Button_Click_OpenJson(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                if (_service.JsonAddress == "")
-                {
-                    _service.JsonAddress = $@"{Environment.CurrentDirectory}";
-                }
+        //private void Button_Click_OpenJson(object sender, RoutedEventArgs e)
+        //{
+        //    try
+        //    {
+        //        //if (_service.JsonAddress == "")
+        //        //{
+        //        //    _service.JsonAddress = $@"{Environment.CurrentDirectory}";
+        //        //}
 
-                OpenFileDialog openFileDialog = new OpenFileDialog();
+        //        //OpenFileDialog openFileDialog = new OpenFileDialog();
 
-                openFileDialog.DefaultExt = ".json";
-                openFileDialog.Filter = "JSON Files|*.json|All Files|*.*";
-                openFileDialog.Title = "Открыть файл";
+        //        //openFileDialog.DefaultExt = ".json";
+        //        //openFileDialog.Filter = "JSON Files|*.json|All Files|*.*";
+        //        //openFileDialog.Title = "Открыть файл";
 
-                if (openFileDialog.ShowDialog() == true)
-                {
-                    _service.JsonAddress = openFileDialog.FileName;
-                }
+        //        //if (openFileDialog.ShowDialog() == true)
+        //        //{
+        //        //    _service.JsonAddress = openFileDialog.FileName;
+        //        //}
 
-                _service.OpenJsonData();
+        //        //_service.OpenJsonData();
 
-                WritePartCollectionToView(null, false, null, true);
+        //        //WritePartCollectionToView(null, false, null, true);
 
-                Task.Run(() => { _service.CheckDeadline(); });
-            }
-            catch (JsonException ex)
-            {
-                MessageBox.Show("Something went wrong with open json: " + ex.Message);
-            }
-        }
+        //        //Task.Run(() => { _service.CheckDeadline(); });
+        //    }
+        //    catch (JsonException ex)
+        //    {
+        //        MessageBox.Show("Something went wrong with open json: " + ex.Message);
+        //    }
+        //}
 
         /// <summary>
         /// Click for saving all data to the DB.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Button_Click_SaveAllToDB(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                _service.SaveAllDataToDB();
+        //private void Button_Click_SaveAllToDB(object sender, RoutedEventArgs e)
+        //{
+        //    try
+        //    {
+        //        _service.SaveAllDataToDB();
 
-                MessageBox.Show("All data saved");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Something went wrong: " + ex.Message);
-            }
-        }
+        //        MessageBox.Show("All data saved");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show("Something went wrong: " + ex.Message);
+        //    }
+        //}
 
         /// <summary>
         /// Click for load all data from the DB.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Button_Click_LoadAllFromDB(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                _service.LoadAllClientsFromDB();
-                _service.LoadAllScoresFromDB();
+        //private void Button_Click_LoadAllFromDB(object sender, RoutedEventArgs e)
+        //{
+        //    try
+        //    {
+        //        _service.LoadAllClientsFromDB();
+        //        _service.LoadAllScoresFromDB();
 
-                WritePartCollectionToView(null, false, null, true);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Something went wrong: " + ex.Message);
-            }
-        }
+        //        WritePartCollectionToView(null, false, null, true);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show("Something went wrong: " + ex.Message);
+        //    }
+        //}
 
-        private void Button_Click_Clear(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                _service.Clients.Clear();
-                dgClientsList.ItemsSource = "";
-                _service.Scores.Clear();
-                dgScoresList.ItemsSource = "";
-                _service.ClientId = 1;
-                _service.ScoreId = 1;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Something went wrong: " + ex.Message);
-            }
-        }
+        //private void Button_Click_Clear(object sender, RoutedEventArgs e)
+        //{
+        //    try
+        //    {
+        //        _service.Clients.Clear();
+        //        //dgClientsList.ItemsSource = "";
+        //        _service.Scores.Clear();
+        //        //dgScoresList.ItemsSource = "";
+        //        _service.ClientId = 1;
+        //        _service.ScoreId = 1;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show("Something went wrong: " + ex.Message);
+        //    }
+        //}
 
         /// <summary>
         /// Check deadline all scores
@@ -424,7 +423,7 @@ namespace Bank
         {
             try
             {
-                _service.CheckDeadline();
+                //_service.CheckDeadline();
             }
             catch (ScoreException ex)
             {
@@ -449,9 +448,9 @@ namespace Bank
         /// <param name="e"></param>
         private void Button_Click_SendMoney(object sender, RoutedEventArgs e)
         {
-            ChoosingRecipient choosingRecipient = new ChoosingRecipient(_service, _logger);
+            //ChoosingRecipient choosingRecipient = new ChoosingRecipient(_service, _logger);
 
-            choosingRecipient.Show();
+            //choosingRecipient.Show();
 
             this.Send_Money_Button.Visibility = Visibility.Hidden;
         }
@@ -465,47 +464,47 @@ namespace Bank
 
         private void WritePartCollectionToView(Client.Statuses? status = null, bool isScore = false, Score.ScoreTypes? typeScore = null, bool isAllScores = false)
         {
-            try
-            {
-                dgScoresList.ItemsSource = null;
-                dgClientsList.ItemsSource = null;
+            //try
+            //{
+            //    dgScoresList.ItemsSource = null;
+            //    dgClientsList.ItemsSource = null;
 
-                if (status == null)
-                {
-                    dgClientsList.ItemsSource = _service.Clients;
-                }
-                else
-                {
-                    List<Client> generalClients = _service.Clients.Where(parameter => parameter.Status == status).ToList();
-                    dgClientsList.ItemsSource = new ObservableCollection<Client>(generalClients);
-                }
+            //    if (status == null)
+            //    {
+            //        dgClientsList.ItemsSource = _service.Clients;
+            //    }
+            //    else
+            //    {
+            //        List<Client> generalClients = _service.Clients.Where(parameter => parameter.Status == status).ToList();
+            //        dgClientsList.ItemsSource = new ObservableCollection<Client>(generalClients);
+            //    }
 
-                if (isScore)
-                {
-                    if (typeScore.HasValue)
-                    {
-                        List<Score> scoresGeneralPeoples = _service.Scores.Where(parameter
-                            => _service.Clients[(int)parameter.ClientId - 1].Status == status
-                            && parameter.ScoreType == typeScore).ToList();
-                        dgScoresList.ItemsSource = new ObservableCollection<Score>(scoresGeneralPeoples);
-                    }
-                    else
-                    {
-                        List<Score> scoresGeneralPeoples = _service.Scores.Where(parameter
-                            => _service.Clients[(int)parameter.ClientId - 1].Status == status).ToList();
-                        dgScoresList.ItemsSource = new ObservableCollection<Score>(scoresGeneralPeoples);
-                    }
-                }
-                if (isAllScores)
-                {
-                    ObservableCollection<Score> allScores = _service.Scores;
-                    dgScoresList.ItemsSource = allScores;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Something went wrong: " + ex.Message);
-            }
+            //    if (isScore)
+            //    {
+            //        if (typeScore.HasValue)
+            //        {
+            //            List<Score> scoresGeneralPeoples = _service.Scores.Where(parameter
+            //                => _service.Clients[(int)parameter.ClientId - 1].Status == status
+            //                && parameter.ScoreType == typeScore).ToList();
+            //            dgScoresList.ItemsSource = new ObservableCollection<Score>(scoresGeneralPeoples);
+            //        }
+            //        else
+            //        {
+            //            List<Score> scoresGeneralPeoples = _service.Scores.Where(parameter
+            //                => _service.Clients[(int)parameter.ClientId - 1].Status == status).ToList();
+            //            dgScoresList.ItemsSource = new ObservableCollection<Score>(scoresGeneralPeoples);
+            //        }
+            //    }
+            //    if (isAllScores)
+            //    {
+            //        ObservableCollection<Score> allScores = _service.Scores;
+            //        dgScoresList.ItemsSource = allScores;
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show("Something went wrong: " + ex.Message);
+            //}
         }
 
         private void WriteEntityToView<T>(long id)
@@ -515,13 +514,13 @@ namespace Bank
                 if (typeof(T) == typeof(Client))
                 {
                     List<Score> scores = _service.Scores.Where(parameter => parameter.ClientId == id).ToList();
-                    dgScoresList.ItemsSource = new ObservableCollection<Score>(scores);
+                    //dgScoresList.ItemsSource = new ObservableCollection<Score>(scores);
                 }
                 else if (typeof(T) == typeof(Score))
                 {
                     List<Score> scores = _service.Scores.Where(parameter => parameter.Id == id).ToList();
                     List<Client> clients = _service.Clients.Where(paremetr => paremetr.Id == scores[0].ClientId).ToList();
-                    dgClientsList.ItemsSource = new ObservableCollection<Client>(clients);
+                    //dgClientsList.ItemsSource = new ObservableCollection<Client>(clients);
                 }
             }
             catch (Exception ex)
