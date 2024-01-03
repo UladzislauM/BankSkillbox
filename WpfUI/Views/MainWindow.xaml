@@ -48,53 +48,100 @@
                 <ColumnDefinition Width="978*"/>
             </Grid.ColumnDefinitions>
 
-            <TreeView x:Name="twBank" 
-                HorizontalAlignment="Left" 
-                Height="370"
-                Margin="295,43,0,0" 
-                VerticalAlignment="Top" 
-                Width="247" Grid.Column="2">
+            <WrapPanel Margin="300,44,420,6"
+                       Width="300"
+                       Grid.Column="2">
+                <Button Command="{Binding ViewAllClientsCommand}" 
+                       Content="All clients"
+                        Width="230"
+                        Margin="5,10,5,5"/>
+                <Button Command="{Binding ViewAllScoresCommand}" 
+                       Content="All clients and scores"
+                        Width="230"
+                        Margin="5,5,5,10"/>
+                <Border BorderBrush="Black"
+                        BorderThickness="1">
+                    <WrapPanel>
 
-                <TextBox IsReadOnly="True">Банк</TextBox>
+                        <TextBox Text="General clients"
+                         Width="230"
+                         HorizontalContentAlignment="Center"
+                         Margin="5"/>
+                        <Button Command="{Binding ViewGeneralClientsCommand}" 
+                       Content="All general clients"
+                        Width="110"
+                        Margin="5,5,5,5"/>
+                        <Button Command="{Binding ViewGeneralCreditsCommand}" 
+                       Content="All general credits"
+                        Width="110"
+                        Margin="5,5,5,5"/>
+                        <Button Command="{Binding ViewGeneralDepositsCommand}" 
+                       Content="All general deposits"
+                        Width="110"
+                        Margin="5,5,5,5"/>
+                        <Button Command="{Binding ViewGeneralScoresCommand}" 
+                       Content="All general scores"
+                        Width="110"
+                        Margin="5,5,5,5"/>
 
-                <TreeViewItem Header="Все клиенты"
-                          Selected="TreeViewItem_Selected_AllClients"/>
-                <TreeViewItem Header="Отдел работы с обычными клиентами"
-                          x:Name="GeneralClients">
-                    <TreeViewItem Header="Клиенты" 
-                              Selected="TreeViewItem_Selected_GeneralClients"/>
-                    <TreeViewItem Header="Счета" 
-                              Selected="TreeViewItem_Selected_Scores"/>
-                    <TreeViewItem Header="Вклады" 
-                              Selected="TreeViewItem_Selected_Deposits"/>
-                    <TreeViewItem Header="Кредиты"
-                              Selected="TreeViewItem_Selected_Credits"/>
-                </TreeViewItem>
-                <TreeViewItem Header="Отдел работы с VIP клиентами"
-                          x:Name="VIPClients">
-                    <TreeViewItem Header="Клиенты" 
-                              Selected="TreeViewItem_Selected_VIPClients"/>
-                    <TreeViewItem Header="Счета" 
-                              Selected="TreeViewItem_Selected_VIPScores"/>
-                    <TreeViewItem Header="Вклады" 
-                              Selected="TreeViewItem_Selected_VIPDeposits"/>
-                    <TreeViewItem Header="Кредиты"
-                              Selected="TreeViewItem_Selected_VIPCredits"/>
-                </TreeViewItem>
-                <TreeViewItem Header="Отдел работы с юридическими лицами"
-                          x:Name="CorpClients">
-                    <TreeViewItem Header="Клиенты" 
-                              Selected="TreeViewItem_Selected_CorpClients"/>
-                    <TreeViewItem Header="Счета" 
-                              Selected="TreeViewItem_Selected_CorpScores"/>
-                    <TreeViewItem Header="Вклады" 
-                              Selected="TreeViewItem_Selected_CorpDeposits"/>
-                    <TreeViewItem Header="Кредиты"
-                              Selected="TreeViewItem_Selected_CorpCredits"/>
-                </TreeViewItem>
-            </TreeView>
-            <!--GotMouseCapture="dgClientsList_GotMouseCapture_Clients"
-                      CellEditEnding="dgClientsList_CellEditEnding"-->
+                    </WrapPanel>
+                </Border>
+                <Border BorderBrush="Black"
+                        BorderThickness="1">
+                    <WrapPanel>
+
+                        <TextBox Text="Corporative clients"
+                        Width="230"
+                        HorizontalContentAlignment="Center"
+                        Margin="5"/>
+                        <Button Command="{Binding ViewCorpClientsCommand}" 
+                        Content="All corporative clients"
+                         Width="110"
+                         Margin="5,5,5,5"/>
+                        <Button Command="{Binding ViewCorpCreditsCommand}" 
+                        Content="All corporative credits"
+                         Width="110"
+                         Margin="5,5,5,5"/>
+                        <Button Command="{Binding ViewCorpDepositsCommand}" 
+                        Content="All corporative deposits"
+                        Width="110"
+                        Margin="5,5,5,5"/>
+                        <Button Command="{Binding ViewCorpScoresCommand}" 
+                        Content="All corporative scores"
+                        Width="110" 
+                        Margin="5,5,5,5"/>
+
+                    </WrapPanel>
+                </Border>
+                <Border Background="Black"
+                        BorderBrush="Aqua"
+                        BorderThickness="1">
+                    <WrapPanel>
+
+                        <TextBox Text="VIP clients"
+                        Width="230"
+                        HorizontalContentAlignment="Center"
+                        Margin="5"/>
+                        <Button Command="{Binding ViewVIPClientsCommand}" 
+                        Content="All VIP clients"
+                         Width="110"
+                         Margin="5,5,5,5"/>
+                        <Button Command="{Binding ViewVIPCreditsCommand}" 
+                        Content="All VIP credits"
+                         Width="110"
+                         Margin="5,5,5,5"/>
+                        <Button Command="{Binding ViewVIPDepositsCommand}" 
+                        Content="All VIP deposits"
+                        Width="110"
+                        Margin="5,5,5,5"/>
+                        <Button Command="{Binding ViewVIPScoresCommand}" 
+                        Content="All VIP scores"
+                        Width="110" 
+                        Margin="5,5,5,5"/>
+
+                    </WrapPanel>
+                </Border>
+            </WrapPanel>
 
             <DataGrid ItemsSource="{Binding Clients}"
                       AutoGenerateColumns="False" 
@@ -120,7 +167,7 @@
 
             <DataGrid ItemsSource="{Binding Scores}"
                       AutoGenerateColumns="False" 
-                      Margin="547,43,164,6" 
+                      Margin="560,43,130,6" 
                       CanUserSortColumns="True"
                       Grid.Column="2">
                 <DataGrid.Columns>

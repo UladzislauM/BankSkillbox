@@ -34,6 +34,8 @@ namespace Bank
             services.AddSingleton<MainBankViewModel>();
             services.AddSingleton<ErrorBankViewModel>();
             services.AddSingleton<Service>();
+            services.AddSingleton<RepositoryForDB>();
+            services.AddSingleton<RepositoryForJson>();
             services.AddSingleton<IDialogService, DefaultDialogService>();
             services.AddLogging(builder =>
             {

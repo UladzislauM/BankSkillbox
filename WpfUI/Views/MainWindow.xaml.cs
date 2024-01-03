@@ -14,7 +14,7 @@ namespace Bank
 {
     public partial class MainWindow : Window
     {
-        private readonly Service _service;
+        //private readonly Service _service;
         private readonly ILogger<MainWindow> _logger;
 
         public MainWindow()
@@ -22,11 +22,11 @@ namespace Bank
             InitializeComponent();
 
             ILogger<Service> servLogger = new LoggerFactory().CreateLogger<Service>();
-            _service = new Service(servLogger);
+            //_service = new Service(servLogger);
             _logger = new LoggerFactory().CreateLogger<MainWindow>();
 
-            _service.SavedJsonObject += _service_SavedJsonObject;
-            _service.ImportantScores += _service_ImportantScores;
+            //_service.SavedJsonObject += _service_SavedJsonObject;
+            //_service.ImportantScores += _service_ImportantScores;
         }
 
         /// <summary>
@@ -34,30 +34,30 @@ namespace Bank
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void TreeViewItem_Selected_GeneralClients(object sender, RoutedEventArgs e)
-        {
-            WritePartCollectionToView(Client.Statuses.General);
-        }
+        //private void TreeViewItem_Selected_GeneralClients(object sender, RoutedEventArgs e)
+        //{
+        //    WritePartCollectionToView(Client.Statuses.General);
+        //}
 
         /// <summary>
         /// Action when selecting a line with VIP clients
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void TreeViewItem_Selected_VIPClients(object sender, RoutedEventArgs e)
-        {
-            WritePartCollectionToView(Client.Statuses.VIP);
-        }
+        //private void TreeViewItem_Selected_VIPClients(object sender, RoutedEventArgs e)
+        //{
+        //    WritePartCollectionToView(Client.Statuses.VIP);
+        //}
 
         /// <summary>
         /// Action when selecting a line with corparative clients
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void TreeViewItem_Selected_CorpClients(object sender, RoutedEventArgs e)
-        {
-            WritePartCollectionToView(Client.Statuses.Corporative);
-        }
+        //private void TreeViewItem_Selected_CorpClients(object sender, RoutedEventArgs e)
+        //{
+        //    WritePartCollectionToView(Client.Statuses.Corporative);
+        //}
 
         /// <summary>
         /// Action when clicking the button with general client accounts
@@ -190,73 +190,73 @@ namespace Bank
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void dgClientsList_GotMouseCapture_Clients(object sender, MouseEventArgs e)
-        {
-            DataGrid dataGrid = sender as DataGrid;
+        //private void dgClientsList_GotMouseCapture_Clients(object sender, MouseEventArgs e)
+        //{
+        //    DataGrid dataGrid = sender as DataGrid;
 
-            if (dataGrid != null)
-            {
-                DataGridRow selectedRow = dataGrid.ItemContainerGenerator.ContainerFromItem(dataGrid.SelectedItem) as DataGridRow;
+        //    if (dataGrid != null)
+        //    {
+        //        DataGridRow selectedRow = dataGrid.ItemContainerGenerator.ContainerFromItem(dataGrid.SelectedItem) as DataGridRow;
 
-                if (selectedRow != null)
-                {
-                    Client client = selectedRow.Item as Client;
+        //        if (selectedRow != null)
+        //        {
+        //            Client client = selectedRow.Item as Client;
 
-                    if (client != null)
-                    {
-                        _service.ClientId = client.Id;
-                        WriteEntityToView<Client>(client.Id);
-                    }
-                }
-            }
-        }
+        //            if (client != null)
+        //            {
+        //                _service.ClientId = client.Id;
+        //                WriteEntityToView<Client>(client.Id);
+        //            }
+        //        }
+        //    }
+        //}
 
         /// <summary>
         /// Update client data from the table column.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void dgClientsList_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
-        {
-            try
-            {
-                Client editedClient = (Client)e.Row.Item;
+        //private void dgClientsList_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        //{
+        //    try
+        //    {
+        //        Client editedClient = (Client)e.Row.Item;
 
-                _service.Clients[(int)editedClient.Id - 1] = editedClient;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Something went wrong: " + ex.Message);
-            }
-        }
+        //        _service.Clients[(int)editedClient.Id - 1] = editedClient;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show("Something went wrong: " + ex.Message);
+        //    }
+        //}
 
         /// <summary>
         /// The focus of the line in the nameplate with the score's name
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void dgScoresList_GotMouseCapture_Scores(object sender, MouseEventArgs e)
-        {
-            this.Send_Money_Button.Visibility = Visibility.Visible;
+        //private void dgScoresList_GotMouseCapture_Scores(object sender, MouseEventArgs e)
+        //{
+        //    this.Send_Money_Button.Visibility = Visibility.Visible;
 
-            DataGrid dataGrid = sender as DataGrid;
+        //    DataGrid dataGrid = sender as DataGrid;
 
-            if (dataGrid != null)
-            {
-                DataGridRow selectedRow = dataGrid.ItemContainerGenerator.ContainerFromItem(dataGrid.SelectedItem) as DataGridRow;
+        //    if (dataGrid != null)
+        //    {
+        //        DataGridRow selectedRow = dataGrid.ItemContainerGenerator.ContainerFromItem(dataGrid.SelectedItem) as DataGridRow;
 
-                if (selectedRow != null)
-                {
-                    Score score = selectedRow.Item as Score;
+        //        if (selectedRow != null)
+        //        {
+        //            Score score = selectedRow.Item as Score;
 
-                    if (score != null)
-                    {
-                        _service.ScoreId = score.Id;
-                        WriteEntityToView<Score>(score.Id);
-                    }
-                }
-            }
-        }
+        //            if (score != null)
+        //            {
+        //                _service.ScoreId = score.Id;
+        //                WriteEntityToView<Score>(score.Id);
+        //            }
+        //        }
+        //    }
+        //}
 
         /// <summary>
         /// Action for the "Add score" button
@@ -285,7 +285,7 @@ namespace Bank
             //        return;
             //}
 
-            WriteEntityToView<Client>(_service.ClientId);
+            //WriteEntityToView<Client>(_service.ClientId);
 
             MessageBox.Show("Score added");
         }
@@ -513,13 +513,13 @@ namespace Bank
             {
                 if (typeof(T) == typeof(Client))
                 {
-                    List<Score> scores = _service.Scores.Where(parameter => parameter.ClientId == id).ToList();
+                    //List<Score> scores = _service.Scores.Where(parameter => parameter.ClientId == id).ToList();
                     //dgScoresList.ItemsSource = new ObservableCollection<Score>(scores);
                 }
                 else if (typeof(T) == typeof(Score))
                 {
-                    List<Score> scores = _service.Scores.Where(parameter => parameter.Id == id).ToList();
-                    List<Client> clients = _service.Clients.Where(paremetr => paremetr.Id == scores[0].ClientId).ToList();
+                    //List<Score> scores = _service.Scores.Where(parameter => parameter.Id == id).ToList();
+                    //List<Client> clients = _service.Clients.Where(paremetr => paremetr.Id == scores[0].ClientId).ToList();
                     //dgClientsList.ItemsSource = new ObservableCollection<Client>(clients);
                 }
             }

@@ -8,7 +8,7 @@ namespace Bank.Buisness
     /// <summary>
     /// Business logic for UladzislauM banking application.
     /// </summary>
-    public class Service : Notification //TODO How work with Json & DB?
+    public class Service : Notification
     {
         public string DBName { get; set; }
         public string DBSource { get; set; }
@@ -31,27 +31,20 @@ namespace Bank.Buisness
         /// </summary>
         public long ScoreId;
 
-        /// <summary>
-        /// Puth to save location
-        /// </summary>
-        //public string JsonAddress;
-
         public ObservableCollection<Score> Scores;
         public ObservableCollection<Client> Clients;
 
-        public Service(ILogger<Service> logger)
+        public Service(ILogger<Service> logger, RepositoryForDB repositoryForDB, RepositoryForJson repositoryForJson)
         {
             _logger = logger;
-            _repositoryForDB = new RepositoryForDB();
-            _repositoryForJson = new RepositoryForJson();
 
             ClientId = 1;
             ScoreId = 1;
 
             Scores = new ObservableCollection<Score>();
             Clients = new ObservableCollection<Client>();
-
-            //JsonAddress = "";
+            _repositoryForDB = repositoryForDB;
+            _repositoryForJson = repositoryForJson;
         }
 
         /// <summary>
@@ -328,6 +321,17 @@ namespace Bank.Buisness
             try
             {
                 UnionData unionData = _repositoryForJson.LoadAllDataFromJson<UnionData>(openPath);
+
+                if (unionData.Clients != null)
+                {
+                    Clients = unionData.Clients;
+                    ClientId = Clients[Clients.Count - 1].Id + 1;
+                }
+                if (unionData.Scores != null)
+                {
+                    Scores = unionData.Scores;
+                    ScoreId = Scores[Scores.Count - 1].Id + 1;
+                }
 
                 _logger.LogInformation($"Json opened.");
 
