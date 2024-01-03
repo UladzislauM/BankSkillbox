@@ -1,4 +1,4 @@
-﻿namespace Bank
+﻿namespace WpfUI.Services
 {
     public interface IDialogService
     {

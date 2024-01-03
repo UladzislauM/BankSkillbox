@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using NLog.Extensions.Logging;
 using System.Windows;
+using WpfUI.Services;
 
 namespace Bank
 {

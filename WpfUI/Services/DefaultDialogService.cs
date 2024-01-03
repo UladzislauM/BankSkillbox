@@ -1,8 +1,7 @@
 ﻿using MarshalsExceptions;
 using Microsoft.Win32;
-using System.Windows;
 
-namespace Bank
+namespace WpfUI.Services
 {
     public class DefaultDialogService : IDialogService
     {
