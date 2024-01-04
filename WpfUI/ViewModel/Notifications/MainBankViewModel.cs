@@ -2,6 +2,8 @@
 using MarshalsExceptions;
 using Microsoft.Extensions.Logging;
 using System.Collections.ObjectModel;
+using WpfUI.Services;
+using WpfUI.ViewModel.Notifications;
 
 namespace Bank
 {
@@ -14,8 +16,13 @@ namespace Bank
 
         private readonly ILogger<MainBankViewModel> _logger;
         private ErrorBankViewModel _errorBankViewModel;
+        private AddClientViewModel _addClientViewModel;
         private readonly Service _service;
         private readonly IDialogService _dialogService;
+
+        private ObservableCollection<Client> _clients;
+        private ObservableCollection<Score> _scores;
+        private string _selectedFilePath;
 
         public DefaultCommand ExecuteLoadAllDataFromDb { get; }
         public DefaultCommand ExecuteSaveAllDataToDb { get; }
@@ -36,16 +43,13 @@ namespace Bank
         public DefaultCommand ViewGeneralCreditsCommand { get; }
         public DefaultCommand ViewVIPCreditsCommand { get; }
         public DefaultCommand ViewCorpCreditsCommand { get; }
-
-        private ObservableCollection<Client> _clients;
-        private ObservableCollection<Score> _scores;
-        private string _errorMessage;
-        private string _selectedFilePath;
+        public DefaultCommand AddNewClientCommand { get; }
 
         public MainBankViewModel(ErrorBankViewModel errorBankViewModel,
             Service service,
             ILogger<MainBankViewModel> logger,
-            IDialogService dialogService)
+            IDialogService dialogService,
+            AddClientViewModel addClientViewModel)
         {
             ExecuteLoadAllDataFromDb = new DefaultCommand(ExecuteLoadAllDataFromDbCommand, CanExecute);
             ExecuteSaveAllDataToDb = new DefaultCommand(ExecuteSaveAllDataToDbCommand, CanExecute);
@@ -66,11 +70,27 @@ namespace Bank
             ViewGeneralCreditsCommand = new DefaultCommand(ExecuteViewGeneralCreditsCommand);
             ViewVIPCreditsCommand = new DefaultCommand(ExecuteViewVIPCreditsCommand);
             ViewCorpCreditsCommand = new DefaultCommand(ExecuteViewCorpCreditsCommand);
+            AddNewClientCommand = new DefaultCommand(ExecuteAddNewClientCommand);
 
             _errorBankViewModel = errorBankViewModel;
             _service = service;
             _logger = logger;
             _dialogService = dialogService;
+            _addClientViewModel = addClientViewModel;
+
+            _service.AddNewClient += _service_AddNewClient;
+        }
+
+        private void _service_AddNewClient(Client client)
+        {
+            if (Clients == null)
+            {
+                Clients = new ObservableCollection<Client> { client };
+            }
+            else
+            {
+                Clients.Add(client);
+            }
         }
 
         public ObservableCollection<Client> Clients
@@ -93,16 +113,6 @@ namespace Bank
             }
         }
 
-        public string ErrorMessage
-        {
-            get => _errorMessage;
-            set
-            {
-                _errorMessage = value;
-                OnPropertyChanged(nameof(ErrorMessage));
-            }
-        }
-
         public ErrorBankViewModel ErrorBankViewModel
         {
             get => _errorBankViewModel;
@@ -110,6 +120,16 @@ namespace Bank
             {
                 _errorBankViewModel = value;
                 OnPropertyChanged(nameof(ErrorBankViewModel));
+            }
+        }
+
+        public AddClientViewModel AddClientViewModel
+        {
+            get => _addClientViewModel;
+            set
+            {
+                _addClientViewModel = value;
+                OnPropertyChanged(nameof(AddClientViewModel));
             }
         }
 
@@ -173,11 +193,23 @@ namespace Bank
         {
             try
             {
-                Clients.Clear();
-                Scores.Clear();
+                if (Scores != null)
+                {
+                    Scores.Clear();
+                }
+                if (Clients != null)
+                {
+                    Clients.Clear();
+                }
 
-                _service.Clients.Clear();
-                _service.Scores.Clear();
+                if (_service.Scores != null)
+                {
+                    _service.Scores.Clear();
+                }
+                if (_service.Clients != null)
+                {
+                    _service.Clients.Clear();
+                }
 
                 _service.ClientId = 1;
                 _service.ScoreId = 1;
@@ -461,6 +493,21 @@ namespace Bank
             }
         }
 
+        /// <summary>
+        /// Executes the command to add new client.
+        /// </summary>
+        private void ExecuteAddNewClientCommand(object? parameter)
+        {
+            try
+            {
+                AddClientViewModel.IsActive = true;
+            }
+            catch (Exception ex)
+            {
+                PrepareExceptionMessage(ex);
+            }
+        }
+
         private bool CanExecute(object parameter)
         {
             return true;
@@ -485,8 +532,14 @@ namespace Bank
         {
             try
             {
-                Scores.Clear();
-                Clients.Clear();
+                if (Scores != null)
+                {
+                    Scores.Clear();
+                }
+                if (Clients != null)
+                {
+                    Clients.Clear();
+                }
 
                 if (status == null)
                 {

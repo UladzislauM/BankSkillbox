@@ -190,13 +190,20 @@
                 </DataGrid.Columns>
             </DataGrid>
 
-            <Button Content="Добавить Клиента"
+            <Button Content="Add client"
                 HorizontalAlignment="Left" 
                 Margin="10,10,0,0"
                 VerticalAlignment="Top"
                 Width="120"
-                Click="Button_Click_AddClient" 
+                Command="{Binding AddNewClientCommand}"
                 Grid.ColumnSpan="3"/>
+            <Button Content="Добавить счет"
+                HorizontalAlignment="Left" 
+                Margin="113,10,0,0"
+                VerticalAlignment="Top"
+                Width="120"
+                Click="Button_Click_AddScore" 
+                Grid.Column="2"/>
             <Button x:Name="Send_Money_Button"
                 Content="Перевести деньги в:"
                 HorizontalAlignment="Left" 
@@ -205,13 +212,6 @@
                 Width="120"
                 Click="Button_Click_SendMoney"
                 Visibility="Hidden" 
-                Grid.Column="2"/>
-            <Button Content="Добавить счет"
-                HorizontalAlignment="Left" 
-                Margin="113,10,0,0"
-                VerticalAlignment="Top"
-                Width="120"
-                Click="Button_Click_AddScore" 
                 Grid.Column="2"/>
             <Button Content="Проверка Срока выплаты"
                 x:Name="buttonTest"
@@ -262,7 +262,7 @@
                 Background="White"
                 Grid.Column="2"
                 BorderBrush="Black"
-                BorderThickness="1">
+                BorderThickness="2">
 
                 <TextBlock Text="{Binding ErrorBankViewModel.ErrorMessage}"
                            TextWrapping="Wrap"
@@ -282,7 +282,7 @@
 
                 <ItemsControl.Style>
                     <Style TargetType="ItemsControl">
-                        <Setter Property="Visibility" Value="Visible" />
+                        <Setter Property="Visibility" Value="Visible"/>
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding ErrorBankViewModel.ErrorMessage}" 
                                          Value="{x:Null}">
@@ -298,6 +298,86 @@
                     </Style>
                 </ItemsControl.Style>
             </ItemsControl>
+
+            <ItemsControl Margin="10,50,670,180"
+                Background="White"
+                Grid.Column="2"
+                BorderThickness="2"
+                BorderBrush="Black">
+                <WrapPanel>
+                    <TextBlock Text="Add new client"
+                           TextAlignment="Center"
+                         Width="250"
+                         Height="22"
+                         Margin="5"/>
+                    <ComboBox Height="22"
+                          Width="150"
+                          Margin="5,0,5,0"
+                          HorizontalAlignment="Left"
+                          ItemsSource="{Binding AddClientViewModel.Statuses}"
+                          SelectedItem="{Binding AddClientViewModel.Status}"/>
+                    <TextBlock Text="Client type"
+                         TextWrapping="Wrap"
+                         HorizontalAlignment="Left"
+                         Width="100"
+                         Height="22"
+                         Margin="5,0,5,0"/>
+                    <TextBox TextWrapping="Wrap"
+                         HorizontalContentAlignment="Left"
+                         HorizontalAlignment="Left"
+                         Width="150"
+                         Height="22"
+                         Text="{Binding AddClientViewModel.FirstName}"
+                         Margin="5"/>
+                    <TextBlock Text="First name"
+                         TextWrapping="Wrap"
+                         HorizontalAlignment="Left"
+                         Width="100"
+                         Height="22"
+                         Margin="5,0,5,0"/>
+                    <TextBox TextWrapping="Wrap"
+                         HorizontalContentAlignment="Left"
+                         HorizontalAlignment="Left"
+                         Width="150"
+                         Height="22"
+                         Text="{Binding AddClientViewModel.LastName}"
+                         Margin="5,0,5,0"/>
+                    <TextBlock Text="Last name"
+                         TextWrapping="Wrap"
+                         HorizontalAlignment="Left"
+                         Width="100"
+                         Height="22"
+                         Margin="5,0,5,0"/>
+                    <Button Content="OK" 
+                        Command="{Binding AddClientViewModel.CreateNewClientCommand}"
+                        HorizontalAlignment="Right" 
+                        VerticalAlignment="Bottom" 
+                        MinWidth="100" 
+                        MinHeight="30" 
+                        Margin="10,15,5,10"/>
+                    <Button Content="Cancel" 
+                        Command="{Binding AddClientViewModel.CancelCommand}"
+                        HorizontalAlignment="Right" 
+                        VerticalAlignment="Bottom" 
+                        MinWidth="100" 
+                        MinHeight="30" 
+                        Margin="10,15,5,10"/>
+                </WrapPanel>
+                <ItemsControl.Style>
+                    <Style TargetType="ItemsControl">
+                        <Setter Property="Visibility" Value="Visible"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding AddClientViewModel.IsActive}" Value="False">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding AddClientViewModel.IsActive}" Value="Frue">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ItemsControl.Style>
+            </ItemsControl>
+
         </Grid>
     </DockPanel>
 </Window>

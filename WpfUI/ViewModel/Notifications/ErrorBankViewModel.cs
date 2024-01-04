@@ -2,7 +2,7 @@
 {
     internal class ErrorBankViewModel : Notification
     {
-        private string errorMessage;
+        private string _errorMessage;
         public DefaultCommand ExecuteVisibalBlock { get; set; }
 
         public ErrorBankViewModel()
@@ -12,12 +12,12 @@
 
         public string ErrorMessage
         {
-            get { return errorMessage; }
+            get => _errorMessage;
             set
             {
-                if (value != errorMessage)
+                if (value != _errorMessage)
                 {
-                    errorMessage = value;
+                    _errorMessage = value;
                     OnPropertyChanged(nameof(ErrorMessage));
                 }
             }
