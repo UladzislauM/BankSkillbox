@@ -20,6 +20,7 @@ namespace Bank.Buisness
 
         public event Action<object> SavedJsonObject;
         public event Action<List<Score>> ImportantScores;
+        public event Action<Client> AddNewClient;
 
         /// <summary>
         /// Table client's focus
@@ -148,6 +149,7 @@ namespace Bank.Buisness
                 client.History = "";
 
                 Clients.Add(client);
+                AddNewClient.Invoke(client);
 
                 _logger.LogInformation($"Client {client.FirstName} {client.LastName} has been created.");
             }
