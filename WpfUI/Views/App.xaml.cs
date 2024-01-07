@@ -21,7 +21,7 @@ namespace Bank
 
             var serviceProvider = Services.BuildServiceProvider();
 
-            var viewModel = serviceProvider.GetRequiredService<MainBankViewModel>();
+            var viewModel = serviceProvider.GetRequiredService<BankViewModel>();
 
             var window = new MainWindow
             {
@@ -33,9 +33,10 @@ namespace Bank
 
         public ServiceCollection ConfigureServices(ServiceCollection services)
         {
-            services.AddSingleton<MainBankViewModel>();
+            services.AddSingleton<BankViewModel>();
             services.AddSingleton<ErrorBankViewModel>();
-            services.AddSingleton<AddClientViewModel>();
+            services.AddSingleton<CreateClientViewModel>();
+            services.AddSingleton<CreateScoreViewModel>();
             services.AddSingleton<Service>();
             services.AddSingleton<RepositoryForDB>();
             services.AddSingleton<RepositoryForJson>();

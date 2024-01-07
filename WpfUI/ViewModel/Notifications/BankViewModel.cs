@@ -7,16 +7,17 @@ using WpfUI.ViewModel.Notifications;
 
 namespace Bank
 {
-    internal class MainBankViewModel : Notification
+    internal class BankViewModel : Notification
     {
         private const string DefaultExtJson = ".json";
         private const string FilterJson = "JSON Files|*.json|All Files|*.*";
         private const string SaveTitleJson = "Сохранить файл";
         private const string OpenTitleJson = "Открыть файл";
 
-        private readonly ILogger<MainBankViewModel> _logger;
+        private readonly ILogger<BankViewModel> _logger;
         private ErrorBankViewModel _errorBankViewModel;
-        private AddClientViewModel _addClientViewModel;
+        private CreateClientViewModel _createClientViewModel;
+        private CreateScoreViewModel _createScoreViewModel;
         private readonly Service _service;
         private readonly IDialogService _dialogService;
 
@@ -44,12 +45,14 @@ namespace Bank
         public DefaultCommand ViewVIPCreditsCommand { get; }
         public DefaultCommand ViewCorpCreditsCommand { get; }
         public DefaultCommand AddNewClientCommand { get; }
+        public DefaultCommand AddNewScoreCommand { get; }
 
-        public MainBankViewModel(ErrorBankViewModel errorBankViewModel,
+        public BankViewModel(ErrorBankViewModel errorBankViewModel,
             Service service,
-            ILogger<MainBankViewModel> logger,
+            ILogger<BankViewModel> logger,
             IDialogService dialogService,
-            AddClientViewModel addClientViewModel)
+            CreateClientViewModel createClientViewModel,
+            CreateScoreViewModel createScoreViewModel)
         {
             ExecuteLoadAllDataFromDb = new DefaultCommand(ExecuteLoadAllDataFromDbCommand, CanExecute);
             ExecuteSaveAllDataToDb = new DefaultCommand(ExecuteSaveAllDataToDbCommand, CanExecute);
@@ -71,12 +74,14 @@ namespace Bank
             ViewVIPCreditsCommand = new DefaultCommand(ExecuteViewVIPCreditsCommand);
             ViewCorpCreditsCommand = new DefaultCommand(ExecuteViewCorpCreditsCommand);
             AddNewClientCommand = new DefaultCommand(ExecuteAddNewClientCommand);
+            AddNewScoreCommand = new DefaultCommand(ExecuteAddNewScoreCommand);
 
             _errorBankViewModel = errorBankViewModel;
             _service = service;
             _logger = logger;
             _dialogService = dialogService;
-            _addClientViewModel = addClientViewModel;
+            _createClientViewModel = createClientViewModel;
+            _createScoreViewModel = createScoreViewModel;
 
             _service.AddNewClient += _service_AddNewClient;
         }
@@ -123,13 +128,23 @@ namespace Bank
             }
         }
 
-        public AddClientViewModel AddClientViewModel
+        public CreateClientViewModel CreateClientViewModel
         {
-            get => _addClientViewModel;
+            get => _createClientViewModel;
             set
             {
-                _addClientViewModel = value;
-                OnPropertyChanged(nameof(AddClientViewModel));
+                _createClientViewModel = value;
+                OnPropertyChanged(nameof(CreateClientViewModel));
+            }
+        }
+
+        public CreateScoreViewModel CreateScoreViewModel
+        {
+            get => _createScoreViewModel;
+            set
+            {
+                _createScoreViewModel = value;
+                OnPropertyChanged(nameof(CreateScoreViewModel));
             }
         }
 
@@ -500,7 +515,24 @@ namespace Bank
         {
             try
             {
-                AddClientViewModel.IsActive = true;
+                CreateClientViewModel.IsActive = true;
+            }
+            catch (Exception ex)
+            {
+                PrepareExceptionMessage(ex);
+            }
+        }
+
+        /// <summary>
+        /// Executes the command to add new score.
+        /// </summary>
+        private void ExecuteAddNewScoreCommand(object? parameter)
+        {
+            try
+            {
+                CreateScoreViewModel.Clients = _service.Clients.ToList();
+
+                CreateScoreViewModel.IsActive = true;
             }
             catch (Exception ex)
             {

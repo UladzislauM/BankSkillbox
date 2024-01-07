@@ -57,7 +57,7 @@ namespace Bank.Buisness
         /// <param name="sum"></param>
         /// <exception cref="DBException"></exception>
         /// <exception cref="ScoreException"></exception>
-        public void CreateNewScore(Score.ScoreTypes scoreType, bool isCapitalization, int period, Decimal sum)
+        public void CreateNewScore(Client client, Score.ScoreTypes scoreType, bool isCapitalization, int period, Decimal sum)
         {
             try
             {
@@ -73,7 +73,7 @@ namespace Bank.Buisness
                 score.Deadline = score.DateScore.AddMonths(period);
                 score.Balance = sum;
                 score.IsCapitalization = isCapitalization;
-                score.ClientId = (int)ClientId;
+                score.ClientId = (int)client.Id;
                 score.IsActive = true;
 
                 if (Clients[(int)ClientId - 1].Scores == null)
@@ -141,9 +141,9 @@ namespace Bank.Buisness
             {
                 Client client = new Client(status);
 
-                int currentClientId = Clients.Count + 1;
+                ClientId = Clients.Count + 1;
 
-                client.Id = currentClientId;
+                client.Id = ClientId;
                 client.FirstName = firstName;
                 client.LastName = lastName;
                 client.History = "";
@@ -222,7 +222,6 @@ namespace Bank.Buisness
                 {
                     Clients = clients;
                     ClientId = clients[clients.Count - 1].Id;
-                    ClientId++;
                 }
 
                 return clients;
@@ -249,7 +248,6 @@ namespace Bank.Buisness
                 {
                     Scores = scores;
                     ScoreId = scores[scores.Count - 1].Id;
-                    ScoreId++;
                 }
 
                 return scores;

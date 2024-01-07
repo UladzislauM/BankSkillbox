@@ -128,5 +128,9 @@ namespace Bank
             General, VIP, Corporative
         }
 
+        public override string? ToString()
+        {
+            return $"{FirstName} {LastName}";
+        }
     }
 }
