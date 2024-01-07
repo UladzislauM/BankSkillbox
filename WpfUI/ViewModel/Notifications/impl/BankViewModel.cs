@@ -54,11 +54,11 @@ namespace Bank
             CreateClientViewModel createClientViewModel,
             CreateScoreViewModel createScoreViewModel)
         {
-            ExecuteLoadAllDataFromDb = new DefaultCommand(ExecuteLoadAllDataFromDbCommand, CanExecute);
-            ExecuteSaveAllDataToDb = new DefaultCommand(ExecuteSaveAllDataToDbCommand, CanExecute);
-            ExecuteClearAllData = new DefaultCommand(ExecuteClearAllDataCommand, CanExecute);
-            ExecuteSaveJson = new DefaultCommand(ExecuteSaveJsonCommand, CanExecute);
-            ExecuteOpenJson = new DefaultCommand(ExecuteOpenJsonCommand, CanExecute);
+            ExecuteLoadAllDataFromDb = new DefaultCommand(ExecuteLoadAllDataFromDbCommand);
+            ExecuteSaveAllDataToDb = new DefaultCommand(ExecuteSaveAllDataToDbCommand);
+            ExecuteClearAllData = new DefaultCommand(ExecuteClearAllDataCommand);
+            ExecuteSaveJson = new DefaultCommand(ExecuteSaveJsonCommand);
+            ExecuteOpenJson = new DefaultCommand(ExecuteOpenJsonCommand);
             ViewAllClientsCommand = new DefaultCommand(ExecuteViewAllClientsCommand);
             ViewAllScoresCommand = new DefaultCommand(ExecuteViewAllScoresCommand);
             ViewGeneralClientsCommand = new DefaultCommand(ExecuteViewGeneralClientsCommand);

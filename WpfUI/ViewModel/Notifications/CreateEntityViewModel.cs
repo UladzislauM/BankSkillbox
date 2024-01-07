@@ -1,22 +1,21 @@
 ﻿using Bank;
 using Bank.Buisness;
+using WpfUI.ViewModel.Notifications;
 
 namespace WpfUI.ViewModel
 {
-    abstract class CreateEntityViewModel<T> : Notification
+    abstract class CreateEntityViewModel<T> : DialogBlockViewModel
     {
         public List<T> Parameteres { get; set; }
         private T _parameter;
-        private bool _isActive;
+
         public DefaultCommand CreateNewEntityCommand { get; }
-        public DefaultCommand CancelCommand { get; }
 
         protected Service _service;
 
         public CreateEntityViewModel()
         {
             CreateNewEntityCommand = new DefaultCommand(ExecuteCreateNewEntity);
-            CancelCommand = new DefaultCommand(ExecuteCancel);
         }
 
         public T Parameter
@@ -29,22 +28,7 @@ namespace WpfUI.ViewModel
             }
         }
 
-        public bool IsActive
-        {
-            get => _isActive;
-            set
-            {
-                _isActive = value;
-                OnPropertyChanged(nameof(IsActive));
-            }
-        }
-
         protected abstract void ExecuteCreateNewEntity(object? parameter);
-
-        private void ExecuteCancel(object? parameter)
-        {
-            IsActive = false;
-        }
 
     }
 }

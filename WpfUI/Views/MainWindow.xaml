@@ -205,13 +205,12 @@
                 Command="{Binding AddNewScoreCommand}"
                 Grid.Column="2"/>
             <Button x:Name="Send_Money_Button"
-                Content="Перевести деньги в:"
+                Content="Send money"
                 HorizontalAlignment="Left" 
                 Margin="238,10,0,0"
                 VerticalAlignment="Top"
                 Width="120"
-                Click="Button_Click_SendMoney"
-                Visibility="Hidden" 
+                Command="{Binding }"
                 Grid.Column="2"/>
             <Button Content="Проверка Срока выплаты"
                 x:Name="buttonTest"
@@ -354,7 +353,7 @@
                         MinHeight="30" 
                         Margin="10,15,5,10"/>
                     <Button Content="Cancel" 
-                        Command="{Binding AddClientViewModel.CancelCommand}"
+                        Command="{Binding CreateClientViewModel.CancelCommand}"
                         HorizontalAlignment="Right" 
                         VerticalAlignment="Bottom" 
                         MinWidth="100" 
@@ -464,6 +463,106 @@
                 <ItemsControl.Style>
                     <Style TargetType="ItemsControl">
                         <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding CreateScoreViewModel.IsActive}" Value="False">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding CreateScoreViewModel.IsActive}" Value="True">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ItemsControl.Style>
+            </ItemsControl>
+            <!--Send money settings-->
+            <ItemsControl Margin="10,50,670,130"
+                Background="White"
+                Grid.Column="2"
+                BorderThickness="2"
+                ItemsSource="{Binding CreateScoreViewModel}"
+                BorderBrush="Black">
+                <WrapPanel>
+                    <TextBlock Text="Send money"
+                           TextAlignment="Center"
+                         Width="250"
+                         Height="22"
+                         Margin="5"/>
+                    <ComboBox Height="22"
+                          Width="150"
+                          Margin="5,0,5,5"
+                          HorizontalAlignment="Left"
+                          ItemsSource="{Binding CreateScoreViewModel.Clients}"
+                          SelectedItem="{Binding CreateScoreViewModel.SelectedClient}"/>
+                    <TextBlock Text="From client"
+                         TextWrapping="Wrap"
+                         HorizontalAlignment="Left"
+                         Width="100"
+                         Height="22"
+                         Margin="5,0,5,5"/>
+                    <ComboBox Height="22"
+                          Width="150"
+                          Margin="5,0,5,0"
+                          HorizontalAlignment="Left"
+                          ItemsSource="{Binding CreateScoreViewModel.Parameteres}"
+                          SelectedItem="{Binding CreateScoreViewModel.Parameter}"/>
+                    <TextBlock Text="To client"
+                         TextWrapping="Wrap"
+                         HorizontalAlignment="Left"
+                         Width="100"
+                         Height="22"
+                         Margin="5,0,5,0"/>
+                    <TextBox TextWrapping="Wrap"
+                         HorizontalContentAlignment="Left"
+                         HorizontalAlignment="Left"
+                         Width="150"
+                         Height="22"
+                         Text="{Binding CreateScoreViewModel.Sum}"
+                         Margin="5"/>
+                    <TextBlock Text="Sum"
+                         TextWrapping="Wrap"
+                         HorizontalAlignment="Left"
+                         Width="100"
+                         Height="22"
+                         Margin="5,0,5,0"/>
+                    <TextBox TextWrapping="Wrap"
+                         HorizontalContentAlignment="Left"
+                         HorizontalAlignment="Left"
+                         Width="150"
+                         Height="22"
+                         Text="{Binding CreateScoreViewModel.Period}"
+                         Margin="5,0,5,0"/>
+                    <TextBlock Text="Period"
+                         TextWrapping="Wrap"
+                         HorizontalAlignment="Left"
+                         Width="100"
+                         Height="22"
+                         Margin="5,0,5,0"/>
+                    <CheckBox Content="Capitalization?"
+                        Command="{Binding CreateScoreViewModel.IsCapitalization}"
+                        Margin="5,5,5,0"
+                              Width="150"/>
+                    <WrapPanel Margin="5,0,5,0"
+                               HorizontalAlignment="Left">
+                        <Button Content="OK" 
+                            Command="{Binding CreateScoreViewModel.CreateNewEntityCommand}"
+                            HorizontalAlignment="Right" 
+                            VerticalAlignment="Bottom" 
+                            MinWidth="100" 
+                            MinHeight="30" 
+                            Margin="5,0,0,0"/>
+                        <Button Content="Cancel" 
+                            Command="{Binding CreateScoreViewModel.CancelCommand}"
+                            HorizontalAlignment="Right" 
+                            VerticalAlignment="Bottom" 
+                            MinWidth="100" 
+                            MinHeight="30" 
+                            Margin="10,15,5,0"/>
+                    </WrapPanel>
+
+                </WrapPanel>
+                <ItemsControl.Style>
+                    <Style TargetType="ItemsControl">
+                        <Setter Property="Visibility" Value="Visible"/>
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding CreateScoreViewModel.IsActive}" Value="False">
                                 <Setter Property="Visibility" Value="Collapsed" />
