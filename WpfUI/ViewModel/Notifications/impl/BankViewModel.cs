@@ -1,6 +1,7 @@
 ﻿using Bank.Buisness;
 using MarshalsExceptions;
 using Microsoft.Extensions.Logging;
+using Npgsql.Replication.PgOutput.Messages;
 using System.Collections.ObjectModel;
 using WpfUI.Models;
 using WpfUI.Services;
@@ -50,6 +51,7 @@ namespace Bank
         public DefaultCommand AddNewClientCommand { get; }
         public DefaultCommand AddNewScoreCommand { get; }
         public DefaultCommand SendMoneyCommand { get; }
+        public DefaultCommand CheckDeadlineCommand { get; }
 
         public BankViewModel(ErrorBankViewModel errorBankViewModel,
             Service service,
@@ -81,6 +83,7 @@ namespace Bank
             AddNewClientCommand = new DefaultCommand(ExecuteAddNewClientCommand);
             AddNewScoreCommand = new DefaultCommand(ExecuteAddNewScoreCommand);
             SendMoneyCommand = new DefaultCommand(ExecuteSendMoneyCommandCommand);
+            CheckDeadlineCommand = new DefaultCommand(ExecuteCheckDeadlineCommand);
 
             _errorBankViewModel = errorBankViewModel;
             _service = service;
@@ -189,7 +192,12 @@ namespace Bank
                 Clients = new ObservableCollection<Client>(_service.LoadAllClientsFromDB());
                 Scores = new ObservableCollection<Score>(_service.LoadAllScoresFromDB());
 
-                _service.Scores = _service.CheckDeadline(_service.Scores); //TODO view deadLine not all data change
+                ObservableCollection<Score> importantScores = new(_service.CheckDeadline());
+
+                if (importantScores.Count > 0)
+                {
+                    PrepareInfoMessage($"Check the important scores: {importantScores}");
+                }
 
                 PrepareInfoMessage("All data loaded");
             }
@@ -264,7 +272,7 @@ namespace Bank
             {
                 _dialogService.SaveFileDialog(DefaultExtJson, FilterJson, SaveTitleJson);
 
-                UnionData unionData = new UnionData { Clients = Clients, Scores = Scores };
+                UnionData unionData = new UnionData { Clients = new(Clients), Scores = new(Scores) };
 
                 _service.SaveJsonWithAllData(unionData, _dialogService.FilePath);
 
@@ -301,7 +309,12 @@ namespace Bank
                     Scores = new ObservableCollection<Score>(unionData.Scores);
                 }
 
-                _service.Scores = _service.CheckDeadline(_service.Scores); //TODO view deadLine not all data change
+                ObservableCollection<Score> importantScores = new(_service.CheckDeadline());
+
+                if (importantScores.Count > 0)
+                {
+                    PrepareInfoMessage($"Check the important scores: {importantScores}");
+                }
 
                 PrepareInfoMessage("Json opened");
             }
@@ -556,7 +569,7 @@ namespace Bank
                 PrepareExceptionMessage(ex);
             }
         }
-        
+
         /// <summary>
         /// Executes the command to send money almong scores.
         /// </summary>
@@ -584,6 +597,25 @@ namespace Bank
                 SendMoneyViewModel.SendMoneyModels = SendMoneyModels;
 
                 SendMoneyViewModel.IsActive = true;
+            }
+            catch (Exception ex)
+            {
+                PrepareExceptionMessage(ex);
+            }
+        }
+
+        private void ExecuteCheckDeadlineCommand(object? parameter)
+        {
+            try
+            {
+                ObservableCollection<Score> importantScores = new(_service.CheckDeadline());
+
+                if (importantScores.Count > 0)
+                {
+                    PrepareInfoMessage($"Check the important scores: {importantScores}");
+                }
+
+                PrepareInfoMessage("Deadlines is cecked");
             }
             catch (Exception ex)
             {

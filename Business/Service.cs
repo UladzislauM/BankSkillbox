@@ -32,8 +32,8 @@ namespace Bank.Buisness
         /// </summary>
         public long ScoreId;
 
-        public ObservableCollection<Score> Scores;
-        public ObservableCollection<Client> Clients;
+        public List<Score> Scores;
+        public List<Client> Clients;
 
         public Service(ILogger<Service> logger, RepositoryForDB repositoryForDB, RepositoryForJson repositoryForJson)
         {
@@ -42,8 +42,8 @@ namespace Bank.Buisness
             ClientId = 1;
             ScoreId = 1;
 
-            Scores = new ObservableCollection<Score>();
-            Clients = new ObservableCollection<Client>();
+            Scores = new List<Score>();
+            Clients = new List<Client>();
             _repositoryForDB = repositoryForDB;
             _repositoryForJson = repositoryForJson;
         }
@@ -212,11 +212,11 @@ namespace Bank.Buisness
         /// </summary>
         /// <returns></returns>
         /// <exception cref="DBException"></exception>
-        public ObservableCollection<Client> LoadAllClientsFromDB()
+        public List<Client> LoadAllClientsFromDB()
         {
             try
             {
-                ObservableCollection<Client> clients = new ObservableCollection<Client>(_repositoryForDB.FindEntitiesFromDB<Client>(DbConnectionNameForLoadEntities));
+                List<Client> clients = new List<Client>(_repositoryForDB.FindEntitiesFromDB<Client>(DbConnectionNameForLoadEntities));
 
                 if (clients.Count != 0)
                 {
@@ -238,11 +238,11 @@ namespace Bank.Buisness
         /// </summary>
         /// <returns></returns>
         /// <exception cref="DBException"></exception>
-        public ObservableCollection<Score> LoadAllScoresFromDB()
+        public List<Score> LoadAllScoresFromDB()
         {
             try
             {
-                ObservableCollection<Score> scores = new ObservableCollection<Score>(_repositoryForDB.FindEntitiesFromDB<Score>(DbConnectionNameForLoadEntities));
+                List<Score> scores = new List<Score>(_repositoryForDB.FindEntitiesFromDB<Score>(DbConnectionNameForLoadEntities));
 
                 if (scores.Count != 0)
                 {
@@ -296,11 +296,6 @@ namespace Bank.Buisness
 
                 bool stateOfSave = _repositoryForJson.SaveDataToJson<T>(objectForSaveJson, savePath);
 
-                //if (stateOfSave)
-                //{
-                //    SavedJsonObject.Invoke(objectForSaveJson);
-                //}
-
                 _logger.LogInformation($"Json data saved.");
 
                 return stateOfSave;
@@ -347,16 +342,16 @@ namespace Bank.Buisness
         /// <summary>
         /// Check deadline all scores
         /// </summary>
-        public ObservableCollection<Score> CheckDeadline(ObservableCollection<Score> scores)
+        public List<Score> CheckDeadline()
         {
             try
             {
                 DateTime currentData = DateTime.Now;
                 List<Score> identifiedScores = new List<Score>();
 
-                for (int i = 0; i > scores.Count - 1; i++)
+                for (int i = 0; i > Scores.Count - 1; i++)
                 {
-                    Score currentScore = scores[i];
+                    Score currentScore = Scores[i];
                     DateTime checkingData = currentScore.Deadline;
 
                     if (currentData >= checkingData)
@@ -384,8 +379,8 @@ namespace Bank.Buisness
                         currentScore.DateLastDividends = checkingData;
                         currentScore.Balance += Decimal.Multiply(currentScore.Balance, currentScore.Percent);
 
-                        int recipientCollectionIndex = scores.IndexOf(scores.First(item => item.Id == currentScore.Id));
-                        scores[recipientCollectionIndex] = currentScore;
+                        int recipientCollectionIndex = Scores.IndexOf(Scores.First(item => item.Id == currentScore.Id));
+                        Scores[recipientCollectionIndex] = currentScore;
 
                         _logger.LogInformation($"Deposit with id = {currentScore.Id} a calculated capitalization.");
                     }
@@ -395,7 +390,7 @@ namespace Bank.Buisness
                 {
                     ImportantScores.Invoke(identifiedScores);
                 }
-                return scores;
+                return Scores;
             }
             catch (Exception ex)
             {
@@ -450,7 +445,7 @@ namespace Bank.Buisness
 
     public struct UnionData
     {
-        public ObservableCollection<Client> Clients { get; set; }
-        public ObservableCollection<Score> Scores { get; set; }
+        public List<Client> Clients { get; set; }
+        public List<Score> Scores { get; set; }
     }
 }
