@@ -187,6 +187,10 @@
                                     Header="Срок дейст."
                                     Width="80"
                                     IsReadOnly="True"/>
+                    <DataGridTextColumn Binding = "{Binding Path = IsCapitalization, UpdateSourceTrigger=PropertyChanged}"
+                                    Header="Капитализ."
+                                    Width="80"
+                                    IsReadOnly="True"/>
                 </DataGrid.Columns>
             </DataGrid>
 
@@ -210,7 +214,7 @@
                 Margin="238,10,0,0"
                 VerticalAlignment="Top"
                 Width="120"
-                Command="{Binding }"
+                Command="{Binding SendMoneyCommand}"
                 Grid.Column="2"/>
             <Button Content="Проверка Срока выплаты"
                 x:Name="buttonTest"
@@ -475,11 +479,11 @@
                 </ItemsControl.Style>
             </ItemsControl>
             <!--Send money settings-->
-            <ItemsControl Margin="10,50,670,130"
+            <ItemsControl Margin="10,50,670,160"
                 Background="White"
                 Grid.Column="2"
                 BorderThickness="2"
-                ItemsSource="{Binding CreateScoreViewModel}"
+                ItemsSource="{Binding SendMoneyViewModel}"
                 BorderBrush="Black">
                 <WrapPanel>
                     <TextBlock Text="Send money"
@@ -491,8 +495,8 @@
                           Width="150"
                           Margin="5,0,5,5"
                           HorizontalAlignment="Left"
-                          ItemsSource="{Binding CreateScoreViewModel.Clients}"
-                          SelectedItem="{Binding CreateScoreViewModel.SelectedClient}"/>
+                          ItemsSource="{Binding SendMoneyViewModel.SendMoneyModels}"
+                          SelectedItem="{Binding SendMoneyViewModel.FromScore}"/>
                     <TextBlock Text="From client"
                          TextWrapping="Wrap"
                          HorizontalAlignment="Left"
@@ -503,8 +507,8 @@
                           Width="150"
                           Margin="5,0,5,0"
                           HorizontalAlignment="Left"
-                          ItemsSource="{Binding CreateScoreViewModel.Parameteres}"
-                          SelectedItem="{Binding CreateScoreViewModel.Parameter}"/>
+                          ItemsSource="{Binding SendMoneyViewModel.SendMoneyModels}"
+                          SelectedItem="{Binding SendMoneyViewModel.ToScore}"/>
                     <TextBlock Text="To client"
                          TextWrapping="Wrap"
                          HorizontalAlignment="Left"
@@ -516,7 +520,7 @@
                          HorizontalAlignment="Left"
                          Width="150"
                          Height="22"
-                         Text="{Binding CreateScoreViewModel.Sum}"
+                         Text="{Binding SendMoneyViewModel.Sum}"
                          Margin="5"/>
                     <TextBlock Text="Sum"
                          TextWrapping="Wrap"
@@ -524,34 +528,17 @@
                          Width="100"
                          Height="22"
                          Margin="5,0,5,0"/>
-                    <TextBox TextWrapping="Wrap"
-                         HorizontalContentAlignment="Left"
-                         HorizontalAlignment="Left"
-                         Width="150"
-                         Height="22"
-                         Text="{Binding CreateScoreViewModel.Period}"
-                         Margin="5,0,5,0"/>
-                    <TextBlock Text="Period"
-                         TextWrapping="Wrap"
-                         HorizontalAlignment="Left"
-                         Width="100"
-                         Height="22"
-                         Margin="5,0,5,0"/>
-                    <CheckBox Content="Capitalization?"
-                        Command="{Binding CreateScoreViewModel.IsCapitalization}"
-                        Margin="5,5,5,0"
-                              Width="150"/>
-                    <WrapPanel Margin="5,0,5,0"
-                               HorizontalAlignment="Left">
+                   <WrapPanel Margin="5,0,5,0"
+                         HorizontalAlignment="Left">
                         <Button Content="OK" 
-                            Command="{Binding CreateScoreViewModel.CreateNewEntityCommand}"
+                            Command="{Binding SendMoneyViewModel.ExecuteSendMoney}"
                             HorizontalAlignment="Right" 
                             VerticalAlignment="Bottom" 
                             MinWidth="100" 
                             MinHeight="30" 
                             Margin="5,0,0,0"/>
                         <Button Content="Cancel" 
-                            Command="{Binding CreateScoreViewModel.CancelCommand}"
+                            Command="{Binding SendMoneyViewModel.CancelCommand}"
                             HorizontalAlignment="Right" 
                             VerticalAlignment="Bottom" 
                             MinWidth="100" 
@@ -562,12 +549,13 @@
                 </WrapPanel>
                 <ItemsControl.Style>
                     <Style TargetType="ItemsControl">
-                        <Setter Property="Visibility" Value="Visible"/>
+                        <Setter Property="Visibility" Value="Collapsed"/>
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding CreateScoreViewModel.IsActive}" Value="False">
+                            <DataTrigger Binding="{Binding SendMoneyViewModel.IsActive}" 
+                                         Value="False">
                                 <Setter Property="Visibility" Value="Collapsed" />
                             </DataTrigger>
-                            <DataTrigger Binding="{Binding CreateScoreViewModel.IsActive}" Value="True">
+                            <DataTrigger Binding="{Binding SendMoneyViewModel.IsActive}" Value="True">
                                 <Setter Property="Visibility" Value="Visible" />
                             </DataTrigger>
                         </Style.Triggers>

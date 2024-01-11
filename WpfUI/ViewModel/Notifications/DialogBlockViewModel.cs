@@ -1,4 +1,5 @@
 ﻿using Bank;
+using Bank.Buisness;
 
 namespace WpfUI.ViewModel.Notifications
 {
@@ -6,10 +7,12 @@ namespace WpfUI.ViewModel.Notifications
     {
         private bool _isActive;
         public DefaultCommand CancelCommand { get; }
+        protected Service _service;
 
-        public DialogBlockViewModel()
+        public DialogBlockViewModel(Service service)
         {
             CancelCommand = new DefaultCommand(ExecuteCancel);
+            _service = service;
         }
 
         public bool IsActive

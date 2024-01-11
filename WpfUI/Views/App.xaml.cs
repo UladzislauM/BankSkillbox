@@ -4,6 +4,7 @@ using NLog.Extensions.Logging;
 using System.Windows;
 using WpfUI.Services;
 using WpfUI.ViewModel.Notifications;
+using WpfUI.ViewModel.Notifications.impl;
 
 namespace Bank
 {
@@ -37,6 +38,7 @@ namespace Bank
             services.AddSingleton<ErrorBankViewModel>();
             services.AddSingleton<CreateClientViewModel>();
             services.AddSingleton<CreateScoreViewModel>();
+            services.AddSingleton<SendMoneyViewModel>();
             services.AddSingleton<Service>();
             services.AddSingleton<RepositoryForDB>();
             services.AddSingleton<RepositoryForJson>();

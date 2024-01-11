@@ -2,8 +2,10 @@
 using MarshalsExceptions;
 using Microsoft.Extensions.Logging;
 using System.Collections.ObjectModel;
+using WpfUI.Models;
 using WpfUI.Services;
 using WpfUI.ViewModel.Notifications;
+using WpfUI.ViewModel.Notifications.impl;
 
 namespace Bank
 {
@@ -18,6 +20,7 @@ namespace Bank
         private ErrorBankViewModel _errorBankViewModel;
         private CreateClientViewModel _createClientViewModel;
         private CreateScoreViewModel _createScoreViewModel;
+        private SendMoneyViewModel _sendMoneyViewModel;
         private readonly Service _service;
         private readonly IDialogService _dialogService;
 
@@ -46,13 +49,15 @@ namespace Bank
         public DefaultCommand ViewCorpCreditsCommand { get; }
         public DefaultCommand AddNewClientCommand { get; }
         public DefaultCommand AddNewScoreCommand { get; }
+        public DefaultCommand SendMoneyCommand { get; }
 
         public BankViewModel(ErrorBankViewModel errorBankViewModel,
             Service service,
             ILogger<BankViewModel> logger,
             IDialogService dialogService,
             CreateClientViewModel createClientViewModel,
-            CreateScoreViewModel createScoreViewModel)
+            CreateScoreViewModel createScoreViewModel,
+            SendMoneyViewModel sendMoneyViewModel)
         {
             ExecuteLoadAllDataFromDb = new DefaultCommand(ExecuteLoadAllDataFromDbCommand);
             ExecuteSaveAllDataToDb = new DefaultCommand(ExecuteSaveAllDataToDbCommand);
@@ -75,6 +80,7 @@ namespace Bank
             ViewCorpCreditsCommand = new DefaultCommand(ExecuteViewCorpCreditsCommand);
             AddNewClientCommand = new DefaultCommand(ExecuteAddNewClientCommand);
             AddNewScoreCommand = new DefaultCommand(ExecuteAddNewScoreCommand);
+            SendMoneyCommand = new DefaultCommand(ExecuteSendMoneyCommandCommand);
 
             _errorBankViewModel = errorBankViewModel;
             _service = service;
@@ -82,6 +88,7 @@ namespace Bank
             _dialogService = dialogService;
             _createClientViewModel = createClientViewModel;
             _createScoreViewModel = createScoreViewModel;
+            _sendMoneyViewModel = sendMoneyViewModel;
 
             _service.AddNewClient += _service_AddNewClient;
         }
@@ -145,6 +152,16 @@ namespace Bank
             {
                 _createScoreViewModel = value;
                 OnPropertyChanged(nameof(CreateScoreViewModel));
+            }
+        }
+
+        public SendMoneyViewModel SendMoneyViewModel
+        {
+            get => _sendMoneyViewModel;
+            set
+            {
+                _sendMoneyViewModel = value;
+                OnPropertyChanged(nameof(SendMoneyViewModel));
             }
         }
 
@@ -539,10 +556,39 @@ namespace Bank
                 PrepareExceptionMessage(ex);
             }
         }
-
-        private bool CanExecute(object parameter)
+        
+        /// <summary>
+        /// Executes the command to send money almong scores.
+        /// </summary>
+        private void ExecuteSendMoneyCommandCommand(object? parameter)
         {
-            return true;
+            try
+            {
+                List<SendMoneyModel> SendMoneyModels = new List<SendMoneyModel>();
+                List<Client> clients = _service.Clients.ToList();
+                if (clients.Count > 0)
+                {
+                    foreach (Client client in clients)
+                    {
+                        List<Score> scores = client.Scores;
+                        if (scores.Count > 0)
+                        {
+                            foreach (Score score in scores)
+                            {
+                                SendMoneyModels.Add(new SendMoneyModel(score, client));
+                            }
+                        }
+                    }
+                }
+
+                SendMoneyViewModel.SendMoneyModels = SendMoneyModels;
+
+                SendMoneyViewModel.IsActive = true;
+            }
+            catch (Exception ex)
+            {
+                PrepareExceptionMessage(ex);
+            }
         }
 
         private void PrepareInfoMessage(string message)

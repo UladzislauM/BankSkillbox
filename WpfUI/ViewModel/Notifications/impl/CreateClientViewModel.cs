@@ -8,10 +8,9 @@ namespace WpfUI.ViewModel.Notifications
         private string _firstName;
         private string _lastName;
 
-        public CreateClientViewModel(Service service)
+        public CreateClientViewModel(Service service) : base(service)
         {
             Parameteres = Enum.GetValues(typeof(Statuses)).Cast<Statuses>().ToList();
-            _service = service;
         }
 
         public string FirstName

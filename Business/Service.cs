@@ -407,29 +407,28 @@ namespace Bank.Buisness
         /// <summary>
         /// Method for transfer money among scores
         /// </summary>
-        /// <param name="scoreRecipientId"></param>
+        /// <param name="toScoreWithId"></param>
         /// <param name="sum"></param>
         /// <returns></returns>
         /// <exception cref="TransactionException"></exception>
-        public bool SendMoney(long scoreRecipientId, Decimal sum)
+        public bool SendMoney(long fromScoreWithId, long toScoreWithId, Decimal sum)
         {
             try
             {
-                Score senderScore = Scores.Where(paremeter => paremeter.Id == ScoreId).First();
+                Score senderScore = Scores.Where(paremeter => paremeter.Id == fromScoreWithId).First();
 
                 if (senderScore.Balance >= sum)
                 {
-                    Score recipientScore = Scores.Where(paremetr => paremetr.Id == scoreRecipientId).First();
+                    Score recipientScore = Scores.Where(paremetr => paremetr.Id == toScoreWithId).First();
 
                     senderScore.Balance -= sum;
 
-                    int senderCollectionIndex = Scores.IndexOf(Scores.First(item => item.Id == ScoreId));
+                    int senderCollectionIndex = Scores.IndexOf(Scores.First(item => item.Id == fromScoreWithId));
                     Scores[senderCollectionIndex] = senderScore;
 
                     recipientScore.Balance += sum;
 
-                    int recipientCollectionIndex = Scores.IndexOf(Scores.First(item => item.Id == scoreRecipientId));
-                    Scores[recipientCollectionIndex] = recipientScore;
+                    int recipientCollectionIndex = Scores.IndexOf(Scores.First(item => item.Id == toScoreWithId));
 
                     _logger.LogInformation($"Money transferred from account id = {senderScore.Id} to account id = {recipientScore.Id}.");
 

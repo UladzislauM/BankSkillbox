@@ -11,9 +11,7 @@ namespace WpfUI.ViewModel
 
         public DefaultCommand CreateNewEntityCommand { get; }
 
-        protected Service _service;
-
-        public CreateEntityViewModel()
+        public CreateEntityViewModel(Service service) : base(service)
         {
             CreateNewEntityCommand = new DefaultCommand(ExecuteCreateNewEntity);
         }

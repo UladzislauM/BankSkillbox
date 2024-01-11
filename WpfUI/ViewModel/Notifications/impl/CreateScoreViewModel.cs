@@ -12,10 +12,9 @@ namespace WpfUI.ViewModel.Notifications
         private List<Client> _clients;
         private Client _selectedClient;
 
-        public CreateScoreViewModel(Service service)
+        public CreateScoreViewModel(Service service) : base(service)
         {
             Parameteres = Enum.GetValues(typeof(ScoreTypes)).Cast<ScoreTypes>().ToList();
-            _service = service;
         }
 
         public bool IsCapitalization
