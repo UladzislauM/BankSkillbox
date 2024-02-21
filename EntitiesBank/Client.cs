@@ -2,7 +2,7 @@
 
 namespace Bank
 {
-    public class Client : MyNotification
+    public class Client : Notification
     {
         private long _id;
         private string _firstName;
@@ -128,5 +128,9 @@ namespace Bank
             General, VIP, Corporative
         }
 
+        public override string? ToString()
+        {
+            return $"{FirstName} {LastName}";
+        }
     }
 }

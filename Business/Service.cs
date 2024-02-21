@@ -1,5 +1,5 @@
 ﻿using MarshalsExceptions;
-using NLog;
+using Microsoft.Extensions.Logging;
 using System.Collections.ObjectModel;
 
 namespace Bank.Buisness
@@ -8,18 +8,19 @@ namespace Bank.Buisness
     /// <summary>
     /// Business logic for UladzislauM banking application.
     /// </summary>
-    public class Service : MyNotification //TODO How work with Json & DB?
+    public class Service : Notification
     {
         public string DBName { get; set; }
         public string DBSource { get; set; }
 
         private const string DbConnectionNameForLoadEntities = "DBConnectionMS";
-        private readonly NLog.Logger _logger;
+        private readonly ILogger<Service> _logger;
         private readonly RepositoryForDB _repositoryForDB;
         private readonly RepositoryForJson _repositoryForJson;
 
         public event Action<object> SavedJsonObject;
         public event Action<List<Score>> ImportantScores;
+        public event Action<Client> AddNewClient;
 
         /// <summary>
         /// Table client's focus
@@ -31,27 +32,20 @@ namespace Bank.Buisness
         /// </summary>
         public long ScoreId;
 
-        /// <summary>
-        /// Puth to save location
-        /// </summary>
-        public string JsonAddress;
+        public List<Score> Scores;
+        public List<Client> Clients;
 
-        public ObservableCollection<Score> Scores;
-        public ObservableCollection<Client> Clients;
-
-        public Service(NLog.Logger logger)
+        public Service(ILogger<Service> logger, RepositoryForDB repositoryForDB, RepositoryForJson repositoryForJson)
         {
             _logger = logger;
-            _repositoryForDB = new RepositoryForDB();
-            _repositoryForJson = new RepositoryForJson();
 
             ClientId = 1;
             ScoreId = 1;
 
-            Scores = new ObservableCollection<Score>();
-            Clients = new ObservableCollection<Client>();
-
-            JsonAddress = "";
+            Scores = new List<Score>();
+            Clients = new List<Client>();
+            _repositoryForDB = repositoryForDB;
+            _repositoryForJson = repositoryForJson;
         }
 
         /// <summary>
@@ -63,7 +57,7 @@ namespace Bank.Buisness
         /// <param name="sum"></param>
         /// <exception cref="DBException"></exception>
         /// <exception cref="ScoreException"></exception>
-        public void CreateNewScore(Score.ScoreTypes scoreType, bool isCapitalization, int period, Decimal sum)
+        public void CreateNewScore(Client client, Score.ScoreTypes scoreType, bool isCapitalization, int period, Decimal sum)
         {
             try
             {
@@ -79,7 +73,7 @@ namespace Bank.Buisness
                 score.Deadline = score.DateScore.AddMonths(period);
                 score.Balance = sum;
                 score.IsCapitalization = isCapitalization;
-                score.ClientId = (int)ClientId;
+                score.ClientId = (int)client.Id;
                 score.IsActive = true;
 
                 if (Clients[(int)ClientId - 1].Scores == null)
@@ -102,16 +96,16 @@ namespace Bank.Buisness
 
                 Scores.Add(score);
 
-                _logger.Info($"A {score.ScoreType} account has been created for the user with id = {score.ClientId}");
+                _logger.LogInformation($"A {score.ScoreType} account has been created for the user with id = {score.ClientId}");
             }
             catch (DBException ex)
             {
-                _logger.Error(ex.Message + " Create new score");
+                _logger.LogError(ex.Message + " Create new score");
                 throw new DBException(ex.Message + " Create new score");
             }
             catch (Exception ex)
             {
-                _logger.Error(ex.Message + " Create new score");
+                _logger.LogError(ex.Message + " Create new score");
                 throw new ScoreException(ex.Message + " Create new score");
             }
         }
@@ -130,7 +124,7 @@ namespace Bank.Buisness
             }
             catch (DBException ex)
             {
-                _logger.Error(ex.Message + " Update score");
+                _logger.LogError(ex.Message + " Update score");
                 throw new DBException(ex.Message + " Update score");
             }
         }
@@ -147,25 +141,26 @@ namespace Bank.Buisness
             {
                 Client client = new Client(status);
 
-                int currentClientId = Clients.Count + 1;
+                ClientId = Clients.Count + 1;
 
-                client.Id = currentClientId;
+                client.Id = ClientId;
                 client.FirstName = firstName;
                 client.LastName = lastName;
                 client.History = "";
 
                 Clients.Add(client);
+                AddNewClient.Invoke(client);
 
-                _logger.Info($"Client {client.FirstName} {client.LastName} has been created.");
+                _logger.LogInformation($"Client {client.FirstName} {client.LastName} has been created.");
             }
             catch (DBException ex)
             {
-                _logger.Error(ex.Message + " Create new client");
+                _logger.LogError(ex.Message + " Create new client");
                 throw new DBException(ex.Message + " Create new client");
             }
             catch (Exception ex)
             {
-                _logger.Error(ex.Message + " Create new client");
+                _logger.LogError(ex.Message + " Create new client");
                 throw new ClientException(ex.Message + " Create new client");
             }
         }
@@ -184,7 +179,7 @@ namespace Bank.Buisness
             }
             catch (DBException ex)
             {
-                _logger.Error(ex.Message + "Update client");
+                _logger.LogError(ex.Message + "Update client");
                 throw new DBException(ex.Message + "Update client");
             }
         }
@@ -203,11 +198,11 @@ namespace Bank.Buisness
                 _repositoryForDB.UpdateEntitiesIntoDB(Scores.ToList(), "DBConnectionMS");
                 _repositoryForDB.UpdateEntitiesIntoDB(Scores.ToList(), "DBConnectionPSQL");
 
-                _logger.Info($"General data saved in the DB");
+                _logger.LogInformation($"General data saved in the DB");
             }
             catch (Exception ex)
             {
-                _logger.Error(ex.Message + " Save all to db");
+                _logger.LogError(ex.Message + " Save all to db");
                 throw new DBException(ex.Message + " Save all to db");
             }
         }
@@ -217,24 +212,23 @@ namespace Bank.Buisness
         /// </summary>
         /// <returns></returns>
         /// <exception cref="DBException"></exception>
-        public ObservableCollection<Client> LoadAllClientsFromDB()
+        public List<Client> LoadAllClientsFromDB()
         {
             try
             {
-                ObservableCollection<Client> clients = new ObservableCollection<Client>(_repositoryForDB.FindEntitiesFromDB<Client>(DbConnectionNameForLoadEntities));
+                List<Client> clients = new List<Client>(_repositoryForDB.FindEntitiesFromDB<Client>(DbConnectionNameForLoadEntities));
 
                 if (clients.Count != 0)
                 {
                     Clients = clients;
                     ClientId = clients[clients.Count - 1].Id;
-                    ClientId++;
                 }
 
                 return clients;
             }
             catch (DBException ex)
             {
-                _logger.Error(ex.Message + " Load all clients.");
+                _logger.LogError(ex.Message + " Load all clients.");
                 throw new DBException(ex.Message + " Load all clients.");
             }
         }
@@ -244,24 +238,23 @@ namespace Bank.Buisness
         /// </summary>
         /// <returns></returns>
         /// <exception cref="DBException"></exception>
-        public ObservableCollection<Score> LoadAllScoresFromDB()
+        public List<Score> LoadAllScoresFromDB()
         {
             try
             {
-                ObservableCollection<Score> scores = new ObservableCollection<Score>(_repositoryForDB.FindEntitiesFromDB<Score>(DbConnectionNameForLoadEntities));
+                List<Score> scores = new List<Score>(_repositoryForDB.FindEntitiesFromDB<Score>(DbConnectionNameForLoadEntities));
 
                 if (scores.Count != 0)
                 {
                     Scores = scores;
                     ScoreId = scores[scores.Count - 1].Id;
-                    ScoreId++;
                 }
 
                 return scores;
             }
             catch (Exception ex)
             {
-                _logger.Error(ex.Message + " Load scores.");
+                _logger.LogError(ex.Message + " Load scores.");
                 throw new DBException(ex.Message + " Load scores.");
             }
         }
@@ -270,22 +263,17 @@ namespace Bank.Buisness
         /// Save all data to Json
         /// </summary>
         /// <exception cref="JsonException"></exception>
-        public void SaveJsonWithAllData()
+        public void SaveJsonWithAllData(UnionData unionData, string savePath)
         {
             try
             {
-                UnionData data = new UnionData();
+                SaveJsonData<UnionData>(unionData, savePath);
 
-                data.Clients = Clients;
-                data.Scores = Scores;
-
-                SaveJsonData<UnionData>(data);
-
-                _logger.Info($"General Json saved");
+                _logger.LogInformation($"General Json saved");
             }
             catch (Exception ex)
             {
-                _logger.Error(ex.Message + " General Json don't save");
+                _logger.LogError(ex.Message + " General Json don't save");
                 throw new JsonException(ex.Message + " General Json don't save");
             }
         }
@@ -296,30 +284,25 @@ namespace Bank.Buisness
         /// <param name="objectForSaveJson"></param>
         /// <param name="address"></param>
         /// <exception cref="JsonException"></exception>
-        public bool SaveJsonData<T>(T objectForSaveJson)
+        public bool SaveJsonData<T>(T objectForSaveJson, string savePath)
         {
             try
             {
-                if (JsonAddress == "")
+                if (savePath == "")
                 {
                     string fileName = "BankData_" + DateTime.Now.ToString("yyyy-MM-dd_HH.mm") + ".json";
-                    JsonAddress = $@"{Environment.CurrentDirectory}\\WorkData\\{fileName}";
+                    savePath = $@"{Environment.CurrentDirectory}\\WorkData\\{fileName}";
                 }
 
-                bool stateOfSave = _repositoryForJson.SaveDataToJson<T>(objectForSaveJson, JsonAddress);
+                bool stateOfSave = _repositoryForJson.SaveDataToJson<T>(objectForSaveJson, savePath);
 
-                if (stateOfSave)
-                {
-                    SavedJsonObject.Invoke(objectForSaveJson);
-                }
-
-                _logger.Info($"Json data saved.");
+                _logger.LogInformation($"Json data saved.");
 
                 return stateOfSave;
             }
             catch (Exception ex)
             {
-                _logger.Error(ex.Message + " Save json data failed");
+                _logger.LogError(ex.Message + " Save json data failed");
                 throw new JsonException(ex.Message + " Save json data failed");
             }
         }
@@ -328,11 +311,11 @@ namespace Bank.Buisness
         /// Opem object from filesystem
         /// </summary>
         /// <exception cref="Exception"></exception>
-        public void OpenJsonData()
+        public UnionData OpenJsonData(string openPath)
         {
             try
             {
-                UnionData unionData = _repositoryForJson.LoadAllDataFromJson<UnionData>(JsonAddress);
+                UnionData unionData = _repositoryForJson.LoadAllDataFromJson<UnionData>(openPath);
 
                 if (unionData.Clients != null)
                 {
@@ -345,11 +328,13 @@ namespace Bank.Buisness
                     ScoreId = Scores[Scores.Count - 1].Id + 1;
                 }
 
-                _logger.Info($"Json opened.");
+                _logger.LogInformation($"Json opened.");
+
+                return unionData;
             }
             catch (Exception ex)
             {
-                _logger.Error(ex.Message + " Open Json failed.");
+                _logger.LogError(ex.Message + " Open Json failed.");
                 throw new JsonException(ex.Message + " Open Json failed");
             }
         }
@@ -357,15 +342,16 @@ namespace Bank.Buisness
         /// <summary>
         /// Check deadline all scores
         /// </summary>
-        public void CheckDeadline()
+        public List<Score> CheckDeadline()
         {
             try
             {
                 DateTime currentData = DateTime.Now;
                 List<Score> identifiedScores = new List<Score>();
 
-                foreach (Score currentScore in Scores)
+                for (int i = 0; i > Scores.Count - 1; i++)
                 {
+                    Score currentScore = Scores[i];
                     DateTime checkingData = currentScore.Deadline;
 
                     if (currentData >= checkingData)
@@ -374,12 +360,12 @@ namespace Bank.Buisness
 
                         if (currentScore.ScoreType == Score.ScoreTypes.Deposit)
                         {
-                            _logger.Info($"Deposit with id = {currentScore.Id} ended.");
+                            _logger.LogInformation($"Deposit with id = {currentScore.Id} ended.");
                             currentScore.IsMoney = true;
                         }
                         else if (currentScore.ScoreType == Score.ScoreTypes.Credit)
                         {
-                            _logger.Info($"Credit with id = {currentScore.Id} ended.");
+                            _logger.LogInformation($"Credit with id = {currentScore.Id} ended.");
                             currentScore.IsMoney = false;
                         }
 
@@ -396,7 +382,7 @@ namespace Bank.Buisness
                         int recipientCollectionIndex = Scores.IndexOf(Scores.First(item => item.Id == currentScore.Id));
                         Scores[recipientCollectionIndex] = currentScore;
 
-                        _logger.Info($"Deposit with id = {currentScore.Id} a calculated capitalization.");
+                        _logger.LogInformation($"Deposit with id = {currentScore.Id} a calculated capitalization.");
                     }
                 }
 
@@ -404,10 +390,11 @@ namespace Bank.Buisness
                 {
                     ImportantScores.Invoke(identifiedScores);
                 }
+                return Scores;
             }
             catch (Exception ex)
             {
-                _logger.Error(ex.Message + " Score verification failed");
+                _logger.LogError(ex.Message + " Score verification failed");
                 throw new ScoreException(ex.Message + " Score verification failed");
             }
         }
@@ -415,31 +402,30 @@ namespace Bank.Buisness
         /// <summary>
         /// Method for transfer money among scores
         /// </summary>
-        /// <param name="scoreRecipientId"></param>
+        /// <param name="toScoreWithId"></param>
         /// <param name="sum"></param>
         /// <returns></returns>
         /// <exception cref="TransactionException"></exception>
-        public bool SendMoney(long scoreRecipientId, Decimal sum)
+        public bool SendMoney(long fromScoreWithId, long toScoreWithId, Decimal sum)
         {
             try
             {
-                Score senderScore = Scores.Where(paremeter => paremeter.Id == ScoreId).First();
+                Score senderScore = Scores.Where(paremeter => paremeter.Id == fromScoreWithId).First();
 
                 if (senderScore.Balance >= sum)
                 {
-                    Score recipientScore = Scores.Where(paremetr => paremetr.Id == scoreRecipientId).First();
+                    Score recipientScore = Scores.Where(paremetr => paremetr.Id == toScoreWithId).First();
 
                     senderScore.Balance -= sum;
 
-                    int senderCollectionIndex = Scores.IndexOf(Scores.First(item => item.Id == ScoreId));
+                    int senderCollectionIndex = Scores.IndexOf(Scores.First(item => item.Id == fromScoreWithId));
                     Scores[senderCollectionIndex] = senderScore;
 
                     recipientScore.Balance += sum;
 
-                    int recipientCollectionIndex = Scores.IndexOf(Scores.First(item => item.Id == scoreRecipientId));
-                    Scores[recipientCollectionIndex] = recipientScore;
+                    int recipientCollectionIndex = Scores.IndexOf(Scores.First(item => item.Id == toScoreWithId));
 
-                    _logger.Info($"Money transferred from account id = {senderScore.Id} to account id = {recipientScore.Id}.");
+                    _logger.LogInformation($"Money transferred from account id = {senderScore.Id} to account id = {recipientScore.Id}.");
 
                     return true;
                 }
@@ -450,7 +436,7 @@ namespace Bank.Buisness
             }
             catch (Exception ex)
             {
-                _logger.Error(ex.Message + " Send money failed.");
+                _logger.LogError(ex.Message + " Send money failed.");
                 throw new TransactionException(ex.Message + " Send money failed.");
             }
         }
@@ -459,7 +445,7 @@ namespace Bank.Buisness
 
     public struct UnionData
     {
-        public ObservableCollection<Client> Clients { get; set; }
-        public ObservableCollection<Score> Scores { get; set; }
+        public List<Client> Clients { get; set; }
+        public List<Score> Scores { get; set; }
     }
 }

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Bank
 {
-    public class Score : MyNotification
+    public class Score : Notification
     { 
         private long _id;
         private Decimal _balance;
@@ -194,6 +194,8 @@ namespace Bank
         {
             Credit, Deposit
         }
+
+
 
     }
 }

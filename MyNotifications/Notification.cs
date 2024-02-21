@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace Bank
 {
-    public class MyNotification : INotifyPropertyChanged
+    public class Notification : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 

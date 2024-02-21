@@ -20,8 +20,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="NLog" Version="5.2.7" />
+    <PackageReference Include="NLog.Extensions.Logging" Version="5.3.7" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Business\Business.csproj" />
     <ProjectReference Include="..\Marshal'sExceptions\MarshalsExceptions.csproj" />
+    <ProjectReference Include="..\MyNotifications\MyNotifications.csproj" />
   </ItemGroup>
 
   <ItemGroup>
